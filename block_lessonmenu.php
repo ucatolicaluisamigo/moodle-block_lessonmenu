@@ -48,9 +48,9 @@ class block_lessonmenu extends block_base {
     /**
      * This block allows instance configuration.
      *
-     * @return boolean
+     * @return bool
      */
-    function instance_allow_config() {
+    public function instance_allow_config() {
         return true;
     }
 
