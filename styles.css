@@ -1,0 +1,11 @@
+.lessonmenu-edit-structure-container {
+    padding: 15px;
+    margin-top: 20px;
+    background-color: var(--secondary, #f9f9f9);
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.lessonmenu-edit-structure-list-container [data-type="section"] {
+    cursor: move;
+}

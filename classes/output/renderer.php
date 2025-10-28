@@ -14,19 +14,27 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace block_lessonmenu\output;
+
+use plugin_renderer_base;
+
 /**
- * Version information for Lesson menu
+ * Renderer for Lesson menu
  *
  * @package    block_lessonmenu
  * @copyright  2025 David Herney @ BambuCo
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+class renderer extends plugin_renderer_base {
 
-defined('MOODLE_INTERNAL') || die();
+    /**
+     * Return the template content for the block.
+     *
+     * @param editstructure $editstructure The editstructure renderable
+     * @return string HTML string
+     */
+    public function render_editstructure(editstructure $editstructure): string {
+        return $this->render_from_template('block_lessonmenu/editor', $editstructure->export_for_template($this));
+    }
 
-$plugin->component    = 'block_lessonmenu';
-$plugin->release      = '1.0';
-$plugin->version      = 2025082800.01;
-$plugin->requires     = 2024100700;
-$plugin->supported    = [405, 500];
-$plugin->maturity     = MATURITY_STABLE;
+}

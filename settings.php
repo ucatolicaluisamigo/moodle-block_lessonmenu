@@ -15,18 +15,31 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information for Lesson menu
+ * TODO describe file settings
  *
  * @package    block_lessonmenu
  * @copyright  2025 David Herney @ BambuCo
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+if ($ADMIN->fulltree) {
 
-$plugin->component    = 'block_lessonmenu';
-$plugin->release      = '1.0';
-$plugin->version      = 2025082800.01;
-$plugin->requires     = 2024100700;
-$plugin->supported    = [405, 500];
-$plugin->maturity     = MATURITY_STABLE;
+    $settings->add(
+        new admin_setting_configtextarea(
+            'block_lessonmenu/contenttypes',
+            get_string('contenttypes', 'block_lessonmenu'),
+            get_string('contenttypes_help', 'block_lessonmenu'),
+            ''
+        )
+    );
+
+    $settings->add(
+        new admin_setting_configtextarea(
+            'block_lessonmenu/defaultsections',
+            get_string('defaultsections', 'block_lessonmenu'),
+            get_string('defaultsections_help', 'block_lessonmenu'),
+            ''
+        )
+    );
+
+}

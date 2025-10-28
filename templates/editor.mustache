@@ -1,0 +1,53 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_lessonmenu/editor
+
+    Template for lesson menu block structure editor.
+
+    Example context (json):
+    {
+    }
+}}
+<div id="lessonmenu-edit-structure-container-{{blockid}}" class="lessonmenu-edit-structure-container">
+    <h3>{{#str}}editstructure, block_lessonmenu{{/str}}</h3>
+    <form id="lessonmenu-edit-structure-form-{{blockid}}" method="post" action="{{editurl}}">
+        <input type="hidden" name="sesskey" value="{{sesskey}}">
+        <input type="hidden" name="id" value="{{id}}">
+        <textarea name="structure" class="hidden"></textarea>
+        <div class="card lessonmenu-edit-structure-list-container">
+            <ul  class="list-group">
+            {{#menuitems}}
+                <li class="list-group-item list-group-item-primary" data-type="section"><h5>{{title}}</h5></li>
+                {{#items}}
+                <li class="list-group-item contenttype-{{#contenttypeinfo}}{{code}}{{/contenttypeinfo}}" data-pageid="{{pageid}}" data-type="page">
+                    {{#contenttypeinfo}}<span class="item-icon" title="{{label}}">{{#icon}}{{#pix}} {{icon}}{{/pix}}{{/icon}}</span>{{/contenttypeinfo}}
+                    {{#page}}
+                        <span class="item-title">{{title}}</span>
+                    {{/page}}
+                </li>
+                {{/items}}
+            {{/menuitems}}
+            </ul>
+        </div>
+        <div class="lessonmenu-edit-structure-actions">
+            <button type="submit" class="btn btn-primary lessonmenu-edit-structure-save-button">
+                {{#str}}savechanges, core{{/str}}
+            </button>
+        </div>
+    </form>
+</div>

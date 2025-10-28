@@ -37,6 +37,15 @@ class block_lessonmenu extends block_base {
     }
 
     /**
+     * This block has settings.
+     *
+     * @return bool
+     */
+    function has_config() {
+        return true;
+    }
+
+    /**
      * Which page types this block may appear on.
      *
      * @return array page-type prefix => true/false.
@@ -92,5 +101,43 @@ class block_lessonmenu extends block_base {
      */
     public function get_aria_role() {
         return 'navigation';
+    }
+
+    /**
+     * Return a block_contents object representing the full contents of this block.
+     *
+     * This internally calls ->get_content(), and then adds the editing controls etc.
+     *
+     * @param object $output The output renderer from the parent context (e.g. page renderer)
+     * @return block_contents a representation of the block, for rendering.
+     */
+    public function get_content_for_output($output) {
+        $bc = parent::get_content_for_output($output);
+
+        if (empty($bc->controls) ||
+                !$this->page->user_is_editing() ||
+                !has_capability('block/lessonmenu:addinstance', $this->context)) {
+            return $bc;
+        }
+
+        $str = get_string('editstructure', 'block_lessonmenu');
+
+        $newcontrols = [];
+        foreach ($bc->controls as $control) {
+            $newcontrols[] = $control;
+            // Append our new item onto the controls if we're on the correct item.
+            if (strpos($control->attributes['class'], 'editing_edit') !== false) {
+                $icon = new pix_icon('e/increase_indent', $str, 'moodle', ['class' => 'iconsmall']);
+                $newcontrols[] = new action_menu_link_secondary(
+                    new moodle_url('/blocks/lessonmenu/edit.php', ['id' => $this->instance->id]),
+                    $icon,
+                    $str,
+                    ['class' => 'editing_manage']
+                );
+            }
+        }
+
+        $bc->controls = $newcontrols;
+        return $bc;
     }
 }

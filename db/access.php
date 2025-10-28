@@ -42,9 +42,6 @@ $capabilities = [
     'block/lessonmenu:myaddinstance' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
-        'archetypes' => [
-            'user' => CAP_ALLOW,
-        ],
-        'clonepermissionsfrom' => 'moodle/my:manageblocks',
+        'archetypes' => [],
     ],
 ];

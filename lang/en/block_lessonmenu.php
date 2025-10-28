@@ -29,3 +29,12 @@ $string['lessonmenu:addinstance'] = 'Add a new Lesson menu block';
 $string['lessonmenu:myaddinstance'] = 'Add a new Lesson menu block to Dashboard';
 $string['pluginname'] = 'Lesson menu';
 $string['privacy:metadata'] = 'The Lesson menu plugin doesn\'t store any personal data.';
+$string['contenttypes'] = 'Content types';
+$string['contenttypes_help'] = 'Specify which content types should be shown in the lesson menu block. Enter one content type per line using the format "type|icon|label", where "type" is the content type name, "icon" is the corresponding icon name from the <a href="https://componentlibrary.moodle.com/admin/tool/componentlibrary/docspage.php/moodle/components/moodle-icons/" target="_blank">moodle pix library</a> and "label" is the display label for the content type (optional). For example:<br>
+video|core:e/insert_edit_video|Video content<br>
+audio|core:i/messagecontentaudio|Audio content';
+$string['defaultsections'] = 'Default sections';
+$string['defaultsections_help'] = 'Define default sections to be included in the lesson menu block. Enter one section per line using the format:<br>
+Section group name|One section;Other section;Last section';
+$string['editstructure'] = 'Edit structure';
+$string['defaultsection'] = 'Lesson pages';
