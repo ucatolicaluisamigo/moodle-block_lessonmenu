@@ -28,10 +28,9 @@ require_once($CFG->dirroot . '/mod/lesson/locallib.php');
 require_login(null, true);
 
 $id = required_param('id', PARAM_INT);
+$structure = optional_param('structure', '', PARAM_RAW);
 
 // Validate the block instance.
-$instance = $DB->get_record('block_instances', ['id' => $id, 'blockname' => 'lessonmenu'], '*', MUST_EXIST);
-
 $context = context_block::instance($id);
 require_capability('block/lessonmenu:addinstance', $context);
 
@@ -55,8 +54,10 @@ $cm = get_coursemodule_from_id($module->name, $coursemodule->id);
 $course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
 $lesson = new lesson($DB->get_record('lesson', ['id' => $cm->instance], '*', MUST_EXIST), $cm, $course);
 
-// Hide the lesson introduction.
-$cm->intro = '';
+if (!empty($structure)) {
+    $newconfigdata = base64_encode(serialize($configdata));
+    $DB->set_field('block_instances', 'configdata', $newconfigdata, ['id' => $id]);
+}
 
 $PAGE->set_cm($cm);
 $cmurl = new moodle_url('/mod/lesson/view.php', ['id' => $coursemodule->id]);
@@ -70,69 +71,15 @@ $PAGE->set_heading($cm->name);
 $PAGE->set_pagetype('block_lessonmenu-edit');
 $PAGE->set_title(get_string('editstructure', 'block_lessonmenu'));
 
-$configdata = empty($instance->configdata) ? (new stdClass()) : unserialize(base64_decode($instance->configdata));
-
-//$PAGE->requires->js_call_amd('block_lessonmenu/designchooser', 'init');
-
-$menuitems = [];
-
-if (property_exists($configdata, 'menuitems')) {
-    $menuitems = @json_decode($configdata->menuitems) ?? [];
-}
-
-$pages = $lesson->load_all_pages();
-
-if (empty($menuitems)) {
-    $items = [];
-    foreach ($pages as $page) {
-        $items[] = (object)[
-            'pageid' => $page->id,
-            'page' => $page,
-            'contenttype' => '',
-            'duration' => 0,
-            'indentation' => 0,
-            'completed' => false,
-        ];
-    }
-
-    $menuitems = [
-        (object)[
-            'title' => get_string('defaultsection', 'block_lessonmenu'),
-            'items' => $items,
-        ],
-    ];
-} else {
-    // Link pages to menu items.
-    foreach ($menuitems as $menuitem) {
-        foreach ($menuitem->items as $key => $item) {
-            if (isset($pages[$item->pageid])) {
-                $item->page = $pages[$item->pageid];
-            } else {
-                // The page was deleted, remove from menu.
-                unset($menuitem->items[$key]);
-            }
-        }
-    }
-}
+$PAGE->requires->js_call_amd('block_lessonmenu/structureeditor', 'init');
 
 // Todo: Calcular "completed" para cada sección.
 
-$renderable = new \block_lessonmenu\output\editstructure($id, $menuitems);
+$renderable = new \block_lessonmenu\output\editstructure($id, $lesson);
 $renderer = $PAGE->get_renderer('block_lessonmenu');
 
 echo $OUTPUT->header();
 
 echo $renderer->render($renderable);
-
-/*if ($iscustom) {
-    echo html_writer::start_tag('div', ['class' => 'row buttons']);
-    echo html_writer::link('contentedit.php?instanceid=' . $id,
-                            $OUTPUT->image_icon('t/add', 'core') . get_string('newcontent', 'block_lessonmenu'),
-                            ['class' => 'btn btn-primary']);
-    echo html_writer::end_tag('div');
-}
-*/
-//$newconfigdata = base64_encode(serialize($configdata));
-//$DB->set_field('block_instances', 'configdata', $newconfigdata, ['id' => $id]);
 
 echo $OUTPUT->footer();

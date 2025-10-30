@@ -21,33 +21,134 @@
 
     Example context (json):
     {
+        "blockid": 42,
+        "editurl": "http://example.com/blocks/lessonmenu/edit.php",
+        "sesskey": "ABCDEF1234567890",
+        "id": 42,
+        "menuitems": [
+            {
+                "title": "Section 1",
+                "items": [
+                    {
+                        "pageid": 1,
+                        "contenttypeinfo": {
+                            "code": "page",
+                            "label": "Page",
+                            "icon": "i/page"
+                        },
+                        "page": {
+                            "title": "Introduction"
+                        }
+                    }
+                ]
+            }
+        ]
     }
 }}
-<div id="lessonmenu-edit-structure-container-{{blockid}}" class="lessonmenu-edit-structure-container">
+<div id="lessonmenu-edit-structure-container" class="lessonmenu-edit-structure-container">
     <h3>{{#str}}editstructure, block_lessonmenu{{/str}}</h3>
-    <form id="lessonmenu-edit-structure-form-{{blockid}}" method="post" action="{{editurl}}">
+    <form id="lessonmenu-edit-structure-form" method="post" action="{{editurl}}">
         <input type="hidden" name="sesskey" value="{{sesskey}}">
         <input type="hidden" name="id" value="{{id}}">
         <textarea name="structure" class="hidden"></textarea>
         <div class="card lessonmenu-edit-structure-list-container">
-            <ul  class="list-group">
+            <ul id="lessonmenu-editor" class="list-group">
             {{#menuitems}}
-                <li class="list-group-item list-group-item-primary" data-type="section"><h5>{{title}}</h5></li>
+                {{#title}}
+                    <li class="list-group-item list-group-item-primary" data-type="section">
+                        <span tabindex="0" role="button" aria-haspopup="true" data-drag-type="move" title="{{title}}">
+                            {{#pix}} t/move {{/pix}}
+                        </span>
+                        <input type="text" value="{{title}}" maxlength="255">
+                        <span class="lessonmenu-structure-item-actions">
+                            <a href="#" data-action="deletesection" class="btn btn-danger" title="{{#str}}delete, core{{/str}}">
+                                {{#pix}} t/delete {{/pix}}
+                            </a>
+                        </span>
+                    </li>
+                {{/title}}
                 {{#items}}
-                <li class="list-group-item contenttype-{{#contenttypeinfo}}{{code}}{{/contenttypeinfo}}" data-pageid="{{pageid}}" data-type="page">
-                    {{#contenttypeinfo}}<span class="item-icon" title="{{label}}">{{#icon}}{{#pix}} {{icon}}{{/pix}}{{/icon}}</span>{{/contenttypeinfo}}
-                    {{#page}}
-                        <span class="item-title">{{title}}</span>
-                    {{/page}}
-                </li>
+                    <li class="list-group-item" data-pageid="{{pageid}}" data-type="page" data-contenttype="{{#contenttypeinfo}}{{code}}{{/contenttypeinfo}}" data-indentation="{{indentation}}">
+                        {{#contenttypeinfo}}<span class="item-icon" title="{{label}}">{{#icon}}{{#pix}} {{icon}} {{/pix}}{{/icon}}</span>{{/contenttypeinfo}}
+                        {{#page}}
+                            <span class="item-title">{{title}}</span>
+                        {{/page}}
+                        <div class="lessonmenu-structure-item-actions">
+                            <button data-action="duration" class="btn btn-primary">
+                                {{#pix}} e/insert_time {{/pix}}
+                                <span value="{{duration}}">{{duration}}</span>
+                                {{#str}}durationshort, block_lessonmenu{{/str}}
+                            </button>
+                            <button data-action="moveleft" class="btn btn-secondary" title="{{#str}}moveleft{{/str}}">
+                                {{#pix}} i/previous {{/pix}}
+                            </button>
+                            <button data-action="moveright" class="btn btn-secondary" title="{{#str}}moveright{{/str}}">
+                                {{#pix}} i/next {{/pix}}
+                            </button>
+                        </div>
+                    </li>
                 {{/items}}
             {{/menuitems}}
             </ul>
         </div>
-        <div class="lessonmenu-edit-structure-actions">
-            <button type="submit" class="btn btn-primary lessonmenu-edit-structure-save-button">
+        <div id="lessonmenu-edit-structure-actions">
+
+            <div class="lessonmenu-edit-actions">
+                {{#hasdefaultsections}}
+                    <div id="lessonmenu-add-defaultsections">
+                        <select class="form-select custom-select" data-type="defaultsections">
+                            {{#defaultsections}}
+                                <option value="{{dataelements}}" title="{{uitext}}">{{uitext}}</option>
+                            {{/defaultsections}}
+                        </select>
+                        <button type="button" class="btn btn-secondary" data-action="adddefaultsections">
+                            {{#str}}addsections, block_lessonmenu{{/str}}
+                        </button>
+                    </div>
+                    <div class="divider"></div>
+                {{/hasdefaultsections}}
+
+                <button type="button" class="btn btn-warning" data-action="addsection">
+                    {{#str}}newsection, block_lessonmenu{{/str}}
+                </button>
+
+                <div class="divider"></div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" data-action="save">
                 {{#str}}savechanges, core{{/str}}
             </button>
         </div>
     </form>
+
+    <div class="hidden">
+        <!-- Modals -->
+        <div id="lessonmenu-change-icon-modal" class="modal">
+            <ul id="lessonmenu-change-icon-select">
+                {{#contenttypes}}
+                <li value="{{code}}">
+                    <span title="{{label}}">
+                        {{#pix}} {{icon}} {{/pix}}
+                    </span>
+                    <label>{{label}}</label>
+                </li>
+                {{/contenttypes}}
+            </ul>
+        </div>
+
+        <!-- Template for a new section -->
+        <ul data-tpl="section">
+            <li class="list-group-item list-group-item-primary" data-type="section">
+                <span tabindex="0" role="button" aria-haspopup="true" data-drag-type="move" title="[title]">
+                    {{#pix}} t/move {{/pix}}
+                </span>
+                <input type="text" value="[title]" maxlength="255">
+                <span class="lessonmenu-structure-item-actions">
+                    <a href="#" data-action="deletesection" class="btn btn-danger" title="{{#str}}delete, core{{/str}}">
+                        {{#pix}} t/delete {{/pix}}
+                    </a>
+                </span>
+            </li>
+        </ul>
+    </div>
 </div>

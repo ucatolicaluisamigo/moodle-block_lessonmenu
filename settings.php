@@ -22,8 +22,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-if ($ADMIN->fulltree) {
+defined('MOODLE_INTERNAL') || die();
 
+if ($ADMIN->fulltree) {
     $settings->add(
         new admin_setting_configtextarea(
             'block_lessonmenu/contenttypes',
@@ -41,5 +42,4 @@ if ($ADMIN->fulltree) {
             ''
         )
     );
-
 }

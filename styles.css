@@ -7,5 +7,114 @@
 }
 
 .lessonmenu-edit-structure-list-container [data-type="section"] {
-    cursor: move;
+    font-size: 120%;
+    font-weight: bold;
+    display: flex;
+    padding-right: 100px;
+}
+
+.lessonmenu-edit-structure-list-container [data-type="section"] input {
+    font-weight: bold;
+    width: 80%;
+    border: none;
+    background-color: transparent;
+    box-shadow: none;
+    padding: 0;
+    margin-left: 10px;
+}
+
+.lessonmenu-edit-structure-list-container [data-type="section"] input:focus {
+    outline: none;
+    border-bottom: 1px solid var(--primary, #0073e6);
+}
+
+.lessonmenu-edit-structure-list-container [data-type="section"] .icon {
+    margin: 0;
+}
+
+.lessonmenu-edit-structure-container .item-icon {
+    cursor: pointer;
+}
+
+#lessonmenu-edit-structure-actions {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #fff;
+    padding: 10px;
+    box-shadow: 0 0 5px var(--gray);
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    flex-direction: row;
+}
+
+#lessonmenu-edit-structure-actions > div {
+    display: flex;
+    align-items: stretch;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+#page.drawers.show-drawer-left #lessonmenu-edit-structure-actions {
+    margin-left: 285px;
+}
+
+#page.drawers.show-drawer-right #lessonmenu-edit-structure-actions {
+    margin-right: 285px;
+}
+
+#lessonmenu-edit-structure-actions .divider {
+    width: 1px;
+    background-color: #dee2e6;
+    border-left: 1px solid #dee2e6;
+}
+
+#lessonmenu-add-defaultsections select {
+    text-overflow: ellipsis;
+    max-width: 200px;
+}
+
+#lessonmenu-change-icon-select li {
+    cursor: pointer;
+    padding: 5px 10px;
+    border-bottom: 1px solid var(--graylight, #e0e0e0);
+}
+
+#lessonmenu-change-icon-select li * {
+    cursor: pointer;
+    pointer-events: none;
+}
+
+#lessonmenu-change-icon-select li:hover {
+    background-color: var(--primary, #0073e6);
+    color: var(--primaryreverse, #fff);
+}
+
+.lessonmenu-edit-structure-list-container [data-type="page"] {
+    position: relative;
+    padding-right: 150px;
+}
+
+.lessonmenu-structure-item-actions {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.lessonmenu-structure-item-actions:not([data-indentation="0"]) [data-action="moveleft"] {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.lessonmenu-structure-item-actions .btn {
+    padding: 0 2px;
+}
+
+.lessonmenu-structure-item-actions .icon {
+    margin: 0;
 }

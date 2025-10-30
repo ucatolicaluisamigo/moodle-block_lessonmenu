@@ -47,11 +47,111 @@ class controller {
                 $type = new \stdClass();
                 $type->code = $code;
                 $type->icon = trim($parts[1]);
-                $type->label = isset($parts[2]) ? trim($parts[2]) : '';
+                $type->label = !empty($parts[2]) ? trim($parts[2]) : $code;
                 $contenttypes[$type->code] = $type;
             }
         }
 
         return $contenttypes;
+    }
+
+    /**
+     * Get default sections.
+     *
+     * @return array List of default section titles.
+     */
+    public static function get_default_sections(): array {
+        $defaultsectionsconfig = get_config('block_lessonmenu', 'defaultsections');
+        $defaultsections = [];
+        if ($defaultsectionsconfig) {
+            $lines = explode("\n", $defaultsectionsconfig);
+            foreach ($lines as $line) {
+                $line = trim($line);
+
+                if (empty($line)) {
+                    continue;
+                }
+
+                $parts = explode('|', $line);
+                $title = trim($parts[0]);
+                $elements = isset($parts[1]) ? explode(';', trim($parts[1])) : [];
+
+                if (empty($title) || empty($elements)) {
+                    continue;
+                }
+
+                $section = new \stdClass();
+                $section->title = $title;
+                $section->elements = array_map('trim', $elements);
+                $section->dataelements = json_encode($section->elements);
+
+                $uitext = '';
+                $uitext = implode(', ', $elements);
+                $section->uitext = $title . ': ' . $uitext;
+
+                $defaultsections[] = $section;
+            }
+        }
+
+        return $defaultsections;
+    }
+
+    /**
+     * Get menu items from lesson tree.
+     *
+     * @param object $instance The block instance.
+     * @param object $lesson The lesson object.
+     * @return array List of menu items.
+     */
+    public static function get_menu_items(object $instance, object $lesson): array {
+
+        $configdata = empty($instance->configdata) ? (new \stdClass()) : unserialize(base64_decode($instance->configdata));
+        $menuitems = [];
+
+        if (property_exists($configdata, 'menuitems')) {
+            $menuitems = @json_decode($configdata->menuitems) ?? [];
+        }
+        $pages = $lesson->load_all_pages();
+
+        if (empty($menuitems)) {
+            $items = [];
+            foreach ($pages as $page) {
+                $items[] = (object)[
+                    'pageid' => $page->id,
+                    'page' => $page,
+                    'contenttype' => '',
+                    'duration' => 0,
+                    'indentation' => 0,
+                    'completed' => false,
+                    'contenttypeinfo' => (object)[
+                        'code' => 'noticon',
+                        'icon' => 'e/fullscreen',
+                        'label' => get_string('changecontenttype', 'block_lessonmenu'),
+                    ],
+                ];
+            }
+
+            $menuitems = [
+                (object)[
+                    'title' => null,
+                    'items' => $items,
+                    'root' => true,
+                ],
+            ];
+        } else {
+            // Link pages to menu items.
+            foreach ($menuitems as $menuitem) {
+                foreach ($menuitem->items as $key => $item) {
+                    if (isset($pages[$item->pageid])) {
+                        $item->page = $pages[$item->pageid];
+                    } else {
+                        // The page was deleted, remove from menu.
+                        unset($menuitem->items[$key]);
+                    }
+                }
+            }
+        }
+
+        return $menuitems;
     }
 }

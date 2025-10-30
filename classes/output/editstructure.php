@@ -29,16 +29,15 @@ use block_lessonmenu\local\controller;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class editstructure implements renderable, templatable {
-
     /**
      * @var int The block instance id.
      */
     private $instanceid;
 
     /**
-     * @var array List of menu items to print.
+     * @var object The lesson object.
      */
-    private $menuitems;
+    private $lesson;
 
     /**
      * Constructor.
@@ -46,9 +45,9 @@ class editstructure implements renderable, templatable {
      * @param int $instanceid The block instance id.
      * @param array $menuitems List of menu items to print.
      */
-    public function __construct(int $instanceid, array $menuitems) {
+    public function __construct(int $instanceid, object $lesson) {
         $this->instanceid = $instanceid;
-        $this->menuitems = $menuitems;
+        $this->lesson = $lesson;
     }
 
     /**
@@ -58,10 +57,14 @@ class editstructure implements renderable, templatable {
      * @return array The data for the template.
      */
     public function export_for_template(renderer_base $output): array {
+        global $DB;
 
+        $instance = $DB->get_record('block_instances', ['id' => $this->instanceid, 'blockname' => 'lessonmenu'], '*', MUST_EXIST);
         $contenttypes = controller::get_content_types();
+        $defaultsections = controller::get_default_sections();
+        $menuitems = controller::get_menu_items($instance, $this->lesson);
 
-        foreach ($this->menuitems as $section) {
+        foreach ($menuitems as $section) {
             // Adjust indentation levels to ensure they don't skip levels.
             $indentation = -1;
             foreach ($section->items as $item) {
@@ -81,7 +84,10 @@ class editstructure implements renderable, templatable {
 
         return [
             'instanceid' => $this->instanceid,
-            'menuitems' => $this->menuitems,
+            'menuitems' => $menuitems,
+            'defaultsections' => $defaultsections,
+            'hasdefaultsections' => !empty($defaultsections),
+            'contenttypes' => array_values($contenttypes),
         ];
     }
 }

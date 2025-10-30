@@ -28,7 +28,6 @@ require_once($CFG->dirroot . '/mod/lesson/lib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class block_lessonmenu extends block_base {
-
     /**
      * Block initialisation
      */
@@ -41,7 +40,7 @@ class block_lessonmenu extends block_base {
      *
      * @return bool
      */
-    function has_config() {
+    public function has_config() {
         return true;
     }
 
@@ -114,9 +113,11 @@ class block_lessonmenu extends block_base {
     public function get_content_for_output($output) {
         $bc = parent::get_content_for_output($output);
 
-        if (empty($bc->controls) ||
-                !$this->page->user_is_editing() ||
-                !has_capability('block/lessonmenu:addinstance', $this->context)) {
+        if (
+            empty($bc->controls) ||
+            !$this->page->user_is_editing() ||
+            !has_capability('block/lessonmenu:addinstance', $this->context)
+        ) {
             return $bc;
         }
 

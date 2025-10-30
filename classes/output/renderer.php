@@ -26,7 +26,6 @@ use plugin_renderer_base;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class renderer extends plugin_renderer_base {
-
     /**
      * Return the template content for the block.
      *
@@ -36,5 +35,4 @@ class renderer extends plugin_renderer_base {
     public function render_editstructure(editstructure $editstructure): string {
         return $this->render_from_template('block_lessonmenu/editor', $editstructure->export_for_template($this));
     }
-
 }
