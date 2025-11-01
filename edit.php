@@ -43,8 +43,9 @@ if ($parentcontext->contextlevel !== CONTEXT_MODULE) {
     throw new moodle_exception('invalidcontext');
 }
 
-$coursemodule = $DB->get_record('course_modules', ['id' => $parentcontext->instanceid]);
-$module = $DB->get_record('modules', ['id' => $coursemodule->module]);
+$coursemodule = $DB->get_record('course_modules', ['id' => $parentcontext->instanceid], 'id, module', MUST_EXIST);
+$module = $DB->get_record('modules', ['id' => $coursemodule->module], 'name', MUST_EXIST);
+$blockinstance = $DB->get_record('block_instances', ['id' => $id], '*', MUST_EXIST);
 
 if ($module->name !== 'lesson') {
     throw new moodle_exception('invalidcontext');
@@ -55,8 +56,27 @@ $course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
 $lesson = new lesson($DB->get_record('lesson', ['id' => $cm->instance], '*', MUST_EXIST), $cm, $course);
 
 if (!empty($structure)) {
+
+    $isvalid = \block_lessonmenu\local\controller::validate_menu_structure($structure);
+    if (!$isvalid) {
+        throw new moodle_exception('invalidstructure', 'block_lessonmenu');
+    }
+
+    $configdata = $blockinstance->configdata;
+
+    if (!empty($configdata)) {
+        $configdata = unserialize(base64_decode($configdata));
+    }
+
+    if (!is_object($configdata)) {
+        $configdata = new stdClass();
+    }
+
+    $configdata->structure = $structure;
     $newconfigdata = base64_encode(serialize($configdata));
+
     $DB->set_field('block_instances', 'configdata', $newconfigdata, ['id' => $id]);
+    redirect(new moodle_url('/mod/lesson/view.php', ['id' => $cm->id]));
 }
 
 $PAGE->set_cm($cm);
@@ -72,8 +92,6 @@ $PAGE->set_pagetype('block_lessonmenu-edit');
 $PAGE->set_title(get_string('editstructure', 'block_lessonmenu'));
 
 $PAGE->requires->js_call_amd('block_lessonmenu/structureeditor', 'init');
-
-// Todo: Calcular "completed" para cada sección.
 
 $renderable = new \block_lessonmenu\output\editstructure($id, $lesson);
 $renderer = $PAGE->get_renderer('block_lessonmenu');

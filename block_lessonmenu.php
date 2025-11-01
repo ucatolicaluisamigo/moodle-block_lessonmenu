@@ -83,12 +83,38 @@ class block_lessonmenu extends block_base {
             return $this->content;
         }
 
+        $filteropt = new \stdClass();
+        $filteropt->overflowdiv = true;
+        $filteropt->noclean = true;
+
         $displayleft = $lesson->displayleft;
         $lesson->displayleft = true;
         $bc = lesson_menu_block_contents($this->page->cm->id, $lesson);
         $lesson->displayleft = $displayleft;
 
         $this->content->text = $bc ? $bc->content : '';
+
+        if (isset($this->config->htmlfooter)) {
+            // Rewrite url.
+            $htmlfooter = file_rewrite_pluginfile_urls($this->config->htmlfooter,
+                                                                     'pluginfile.php',
+                                                                     $this->context->id,
+                                                                     'block_lessonmenu',
+                                                                     'content_footer',
+                                                                     0);
+            // Default to FORMAT_HTML.
+            $htmlfooterformat = FORMAT_HTML;
+            // Check to see if the format has been properly set on the config.
+            if (isset($this->config->htmlfooterformat)) {
+                $htmlfooterformat = $this->config->htmlfooterformat;
+            }
+
+            if (is_array($htmlfooter)) {
+                $htmlfooter = $htmlfooter['text'];
+            }
+
+            $this->content->footer .= format_text($htmlfooter, $htmlfooterformat, $filteropt);
+        }
 
         return $this->content;
     }
@@ -140,5 +166,27 @@ class block_lessonmenu extends block_base {
 
         $bc->controls = $newcontrols;
         return $bc;
+    }
+
+    /**
+     * Serialize and store config data.
+     *
+     * @param object $data
+     * @param boolean $nolongerused
+     * @return void
+     */
+    public function instance_config_save($data, $nolongerused = false) {
+        $config = clone($data);
+
+        // Move embedded files into a proper filearea and adjust HTML links to match.
+        $config->htmlfooter = file_save_draft_area_files($data->htmlfooter['itemid'],
+                              $this->context->id,
+                              'block_lessonmenu',
+                              'content_footer',
+                              0,
+                              ['subdirs' => true],
+                              $data->htmlfooter['text']);
+        $config->htmlfooterformat = $data->htmlfooter['format'];
+        parent::instance_config_save($config, $nolongerused);
     }
 }

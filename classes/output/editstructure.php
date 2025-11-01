@@ -43,7 +43,7 @@ class editstructure implements renderable, templatable {
      * Constructor.
      *
      * @param int $instanceid The block instance id.
-     * @param array $menuitems List of menu items to print.
+     * @param object $lesson The lesson object.
      */
     public function __construct(int $instanceid, object $lesson) {
         $this->instanceid = $instanceid;
@@ -68,26 +68,30 @@ class editstructure implements renderable, templatable {
             // Adjust indentation levels to ensure they don't skip levels.
             $indentation = -1;
             foreach ($section->items as $item) {
-                if (($indentation - $item->indentation) > 1) {
+                if (($item->indentation - $indentation) > 1) {
                     $item->indentation = $indentation + 1;
                 } else {
                     $indentation = $item->indentation;
                 }
-            }
 
-            if (isset($contenttypes[$item->contenttype])) {
-                $item->contenttypeinfo = $contenttypes[$item->contenttype];
-            } else {
-                $item->contenttypeinfo = null;
+                if (isset($contenttypes[$item->contenttype])) {
+                    $item->contenttypeinfo = $contenttypes[$item->contenttype];
+                } else {
+                    $item->contenttypeinfo = null;
+                }
             }
         }
 
+        $editurl = (string)(new \moodle_url('/blocks/lessonmenu/edit.php'));
         return [
             'instanceid' => $this->instanceid,
             'menuitems' => $menuitems,
             'defaultsections' => $defaultsections,
             'hasdefaultsections' => !empty($defaultsections),
             'contenttypes' => array_values($contenttypes),
+            'id' => $this->instanceid,
+            'sesskey' => sesskey(),
+            'editurl' => $editurl,
         ];
     }
 }

@@ -108,34 +108,32 @@ class controller {
         $configdata = empty($instance->configdata) ? (new \stdClass()) : unserialize(base64_decode($instance->configdata));
         $menuitems = [];
 
-        if (property_exists($configdata, 'menuitems')) {
-            $menuitems = @json_decode($configdata->menuitems) ?? [];
+        if (property_exists($configdata, 'structure')) {
+            $menuitems = @json_decode($configdata->structure) ?? [];
         }
         $pages = $lesson->load_all_pages();
 
         if (empty($menuitems)) {
             $items = [];
+            $index = 0;
             foreach ($pages as $page) {
+                $index++;
                 $items[] = (object)[
+                    'index' => $index,
                     'pageid' => $page->id,
                     'page' => $page,
                     'contenttype' => '',
                     'duration' => 0,
                     'indentation' => 0,
                     'completed' => false,
-                    'contenttypeinfo' => (object)[
-                        'code' => 'noticon',
-                        'icon' => 'e/fullscreen',
-                        'label' => get_string('changecontenttype', 'block_lessonmenu'),
-                    ],
+                    'contenttypeinfo' => null,
                 ];
             }
 
             $menuitems = [
                 (object)[
                     'title' => null,
-                    'items' => $items,
-                    'root' => true,
+                    'items' => $items
                 ],
             ];
         } else {
@@ -153,5 +151,91 @@ class controller {
         }
 
         return $menuitems;
+    }
+
+    /**
+     * Validate menu structure.
+     *
+     * @param string $structure The menu structure text to validate.
+     * @return bool True if valid, false otherwise.
+     */
+    public static function validate_menu_structure(string $structure): bool {
+        $structure = @json_decode($structure);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            return false;
+        }
+
+        // Basic validation of the structure.
+        if (!is_array($structure)) {
+            return false;
+        }
+
+        $attrs = ['title', 'items'];
+        $attrsitem = ['pageid', 'contenttype', 'duration', 'indentation'];
+
+        foreach ($structure as $section) {
+
+            // Check if exist not allowed attributes.
+            $sectionattrs = array_keys(get_object_vars($section));
+            foreach ($attrs as $attr) {
+                if (!in_array($attr, $sectionattrs)) {
+                    return false;
+                }
+            }
+
+            if (!property_exists($section, 'title') || !(is_string($section->title) || $section->title === null)) {
+                return false;
+            }
+
+            if (!property_exists($section, 'items') || !is_array($section->items)) {
+                return false;
+            }
+
+            foreach ($section->items as $item) {
+
+                // Check if exist not allowed attributes.
+                $itemattrs = array_keys(get_object_vars($item));
+                foreach ($attrsitem as $attr) {
+                    if (!in_array($attr, $itemattrs)) {
+                        return false;
+                    }
+                }
+
+                // Check required attributes.
+                foreach ($attrsitem as $attr) {
+                    if (!property_exists($item, $attr)) {
+                        return false;
+                    }
+                }
+
+                // Validate attribute types.
+                if (!is_numeric($item->pageid)) {
+                    return false;
+                }
+                if (!is_string($item->contenttype)) {
+                    return false;
+                }
+                if (!is_numeric($item->duration)) {
+                    return false;
+                }
+                if (!is_numeric($item->indentation)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Checks if Codemirror editor plugin is present
+     *
+     * @return bool
+     */
+    public static function codemirror_present(): bool {
+        $pluginmanager = \core_plugin_manager::instance();
+        $plugins = $pluginmanager->get_enabled_plugins('editor');
+        return in_array('codemirror', $plugins);
     }
 }

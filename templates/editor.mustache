@@ -31,6 +31,8 @@
                 "items": [
                     {
                         "pageid": 1,
+                        "indentation": 0,
+                        "duration": 5,
                         "contenttypeinfo": {
                             "code": "page",
                             "label": "Page",
@@ -51,82 +53,88 @@
         <input type="hidden" name="sesskey" value="{{sesskey}}">
         <input type="hidden" name="id" value="{{id}}">
         <textarea name="structure" class="hidden"></textarea>
-        <div class="card lessonmenu-edit-structure-list-container">
-            <ul id="lessonmenu-editor" class="list-group">
-            {{#menuitems}}
-                {{#title}}
-                    <li class="list-group-item list-group-item-primary" data-type="section">
-                        <span tabindex="0" role="button" aria-haspopup="true" data-drag-type="move" title="{{title}}">
-                            {{#pix}} t/move {{/pix}}
-                        </span>
-                        <input type="text" value="{{title}}" maxlength="255">
-                        <span class="lessonmenu-structure-item-actions">
-                            <a href="#" data-action="deletesection" class="btn btn-danger" title="{{#str}}delete, core{{/str}}">
-                                {{#pix}} t/delete {{/pix}}
-                            </a>
-                        </span>
-                    </li>
-                {{/title}}
-                {{#items}}
-                    <li class="list-group-item" data-pageid="{{pageid}}" data-type="page" data-contenttype="{{#contenttypeinfo}}{{code}}{{/contenttypeinfo}}" data-indentation="{{indentation}}">
-                        {{#contenttypeinfo}}<span class="item-icon" title="{{label}}">{{#icon}}{{#pix}} {{icon}} {{/pix}}{{/icon}}</span>{{/contenttypeinfo}}
-                        {{#page}}
-                            <span class="item-title">{{title}}</span>
-                        {{/page}}
-                        <div class="lessonmenu-structure-item-actions">
-                            <button data-action="duration" class="btn btn-primary">
-                                {{#pix}} e/insert_time {{/pix}}
-                                <span value="{{duration}}">{{duration}}</span>
-                                {{#str}}durationshort, block_lessonmenu{{/str}}
-                            </button>
-                            <button data-action="moveleft" class="btn btn-secondary" title="{{#str}}moveleft{{/str}}">
-                                {{#pix}} i/previous {{/pix}}
-                            </button>
-                            <button data-action="moveright" class="btn btn-secondary" title="{{#str}}moveright{{/str}}">
-                                {{#pix}} i/next {{/pix}}
-                            </button>
-                        </div>
-                    </li>
-                {{/items}}
-            {{/menuitems}}
-            </ul>
-        </div>
-        <div id="lessonmenu-edit-structure-actions">
+    </form>
 
-            <div class="lessonmenu-edit-actions">
-                {{#hasdefaultsections}}
-                    <div id="lessonmenu-add-defaultsections">
-                        <select class="form-select custom-select" data-type="defaultsections">
-                            {{#defaultsections}}
-                                <option value="{{dataelements}}" title="{{uitext}}">{{uitext}}</option>
-                            {{/defaultsections}}
-                        </select>
-                        <button type="button" class="btn btn-secondary" data-action="adddefaultsections">
-                            {{#str}}addsections, block_lessonmenu{{/str}}
+    <div class="card lessonmenu-edit-structure-list-container">
+        <ul id="lessonmenu-editor" class="list-group">
+        {{#menuitems}}
+            {{#title}}
+                <li class="list-group-item list-group-item-primary" data-type="section">
+                    <span tabindex="0" role="button" aria-haspopup="true" data-drag-type="move" title="{{title}}">
+                        {{#pix}} t/move {{/pix}}
+                    </span>
+                    <input type="text" value="{{title}}" maxlength="255">
+                    <span class="lessonmenu-structure-item-actions">
+                        <a href="#" data-action="deletesection" class="btn btn-danger" title="{{#str}}delete, core{{/str}}">
+                            {{#pix}} t/delete {{/pix}}
+                        </a>
+                    </span>
+                </li>
+            {{/title}}
+            {{#items}}
+                <li class="list-group-item" data-pageid="{{pageid}}" data-type="page" data-contenttype="{{contenttype}}" data-indentation="{{indentation}}" data-index="{{index}}">
+                    {{#contenttypeinfo}}
+                        <span class="item-icon" title="{{label}}">{{#pix}} {{icon}} {{/pix}}</span>
+                    {{/contenttypeinfo}}
+                    {{^contenttypeinfo}}
+                        <span class="item-icon" title="{{#str}}changecontenttype, block_lessonmenu{{/str}}">{{#pix}} e/fullscreen {{/pix}}</span>
+                    {{/contenttypeinfo}}
+                    {{#page}}
+                        <span class="item-title">{{title}}</span>
+                    {{/page}}
+                    <div class="lessonmenu-structure-item-actions">
+                        <span data-action="duration">
+                            {{#pix}} e/insert_time {{/pix}}
+                            <input type="number" value="{{duration}}">
+                            {{#str}}durationshort, block_lessonmenu{{/str}}
+                        </span>
+                        <button type="button" data-action="moveleft" class="btn btn-secondary" title="{{#str}}moveleft{{/str}}">
+                            {{#pix}} i/previous {{/pix}}
+                        </button>
+                        <button type="button" data-action="moveright" class="btn btn-secondary" title="{{#str}}moveright{{/str}}">
+                            {{#pix}} i/next {{/pix}}
                         </button>
                     </div>
-                    <div class="divider"></div>
-                {{/hasdefaultsections}}
+                </li>
+            {{/items}}
+        {{/menuitems}}
+        </ul>
+    </div>
 
-                <button type="button" class="btn btn-warning" data-action="addsection">
-                    {{#str}}newsection, block_lessonmenu{{/str}}
-                </button>
-
+    <div id="lessonmenu-edit-structure-actions">
+        <div class="lessonmenu-edit-actions">
+            {{#hasdefaultsections}}
+                <div id="lessonmenu-add-defaultsections">
+                    <select class="form-select custom-select" data-type="defaultsections">
+                        {{#defaultsections}}
+                            <option value="{{dataelements}}" title="{{uitext}}">{{uitext}}</option>
+                        {{/defaultsections}}
+                    </select>
+                    <button type="button" class="btn btn-secondary" data-action="adddefaultsections">
+                        {{#str}}addsections, block_lessonmenu{{/str}}
+                    </button>
+                </div>
                 <div class="divider"></div>
-            </div>
+            {{/hasdefaultsections}}
 
-            <button type="submit" class="btn btn-primary" data-action="save">
-                {{#str}}savechanges, core{{/str}}
+            <button type="button" class="btn btn-warning" data-action="addsection">
+                {{#str}}newsection, block_lessonmenu{{/str}}
             </button>
+
+            <div class="divider"></div>
         </div>
-    </form>
+
+        <button type="submit" class="btn btn-primary" data-action="save">
+            {{#str}}savechanges, core{{/str}}
+        </button>
+    </div>
 
     <div class="hidden">
         <!-- Modals -->
         <div id="lessonmenu-change-icon-modal" class="modal">
             <ul id="lessonmenu-change-icon-select">
                 {{#contenttypes}}
-                <li value="{{code}}">
+                <li data-value="{{code}}">
                     <span title="{{label}}">
                         {{#pix}} {{icon}} {{/pix}}
                     </span>

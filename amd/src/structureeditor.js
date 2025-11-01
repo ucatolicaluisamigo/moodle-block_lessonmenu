@@ -25,10 +25,13 @@ import SortableList from 'core/sortable_list';
 import Log from 'core/log';
 import ModalFactory from 'core/modal_factory';
 import {get_strings as getStrings} from 'core/str';
+import Notification from 'core/notification';
 
 // Load strings.
 var strings = [
     {key: 'changecontenttype', component: 'block_lessonmenu'},
+    {key: 'invalidindentation', component: 'block_lessonmenu'},
+    {key: 'invalidindentationtitle', component: 'block_lessonmenu'}
 ];
 var s = [];
 
@@ -138,6 +141,134 @@ export const init = async() => {
         }
     });
 
+    // Move item to right.
+    $editorContainer.find('[data-action="moveright"]').on('click', event => {
+        event.preventDefault();
+        const $item = $(event.currentTarget).closest('[data-type="page"]');
+        if (!$item.length) {
+            return;
+        }
+        const $prevItem = $item.prev('[data-type="page"]');
+        let indentation = $item.data('indentation') || 0;
+        // First item cannot be moved right.
+        if ($prevItem.length === 0 || (($prevItem.data('indentation') - indentation) < 0)) {
+            return;
+        }
+        indentation += 1;
+        setIdentation($item, indentation);
+
+        // Move to the right of the next item with less indentation.
+        let $nextItem = $item.next('[data-type="page"]');
+        while ($nextItem && $nextItem.length) {
+            const nextIndentation = $nextItem.data('indentation') || 0;
+            if (nextIndentation <= (indentation - 1)) {
+                break;
+            } else {
+                setIdentation($nextItem, nextIndentation + 1);
+                $nextItem = $nextItem.next('[data-type="page"]');
+            }
+        }
+
+    });
+
+    // Move item to left.
+    $editorContainer.find('[data-action="moveleft"]').on('click', event => {
+        event.preventDefault();
+        const $item = $(event.currentTarget).closest('[data-type="page"]');
+        if (!$item.length) {
+            return;
+        }
+        let indentation = $item.data('indentation') || 0;
+
+        // First item cannot be moved right.
+        if (indentation == 0) {
+            return;
+        }
+
+        indentation -= 1;
+        setIdentation($item, indentation);
+
+        // Move to the left of the next item with less indentation.
+        let $nextItem = $item.next('[data-type="page"]');
+        while ($nextItem && $nextItem.length) {
+            const nextIndentation = $nextItem.data('indentation') || 0;
+            if (nextIndentation <= (indentation + 1)) {
+                break;
+            } else {
+                setIdentation($nextItem, nextIndentation - 1);
+                $nextItem = $nextItem.next('[data-type="page"]');
+            }
+        }
+    });
+
+    // Save the structure.
+    $('#lessonmenu-edit-structure-actions [data-action="save"]').on('click', event => {
+        event.preventDefault();
+
+        let menuitems = [];
+        let section = {
+            title: null,
+            items: []
+        };
+        menuitems.push(section);
+
+        let indentation = -1;
+        $editorContainer.find('[data-type="section"], [data-type="page"]').each((index, element) => {
+            const $element = $(element);
+
+            if ($element.data('type') === 'section') {
+                const sectiontitle = $element.find('input[type="text"]').val();
+                if (!sectiontitle || sectiontitle.trim() === '') {
+                    return; // Skip sections without title.
+                }
+
+                // Start a new section.
+                section = {
+                    title: sectiontitle,
+                    items: []
+                };
+                menuitems.push(section);
+                indentation = -1;
+                return;
+            } else if ($element.data('type') === 'page') {
+                let item = {
+                    "pageid": $element.data('pageid'),
+                    "contenttype": $element.data('contenttype'),
+                    "duration": $element.find('[data-action="duration"] input').val(),
+                    "indentation": $element.data('indentation')
+                };
+
+                if ((item.indentation - indentation) > 1) {
+                    // Invalid indentation, notify and stop.
+                    Notification.alert(
+                        s.invalidindentationtitle,
+                        s.invalidindentation + ' (' + $element.find('.item-title').text() + ')'
+                    );
+                    throw new Error('Invalid indentation for item: ' + $element.find('.item-title').text());
+                }
+                indentation = item.indentation;
+
+                section.items.push(item);
+                return;
+            }
+        });
+
+        const $structureTextarea = $('textarea[name="structure"]');
+        $structureTextarea.val(JSON.stringify(menuitems));
+
+        // Send the form.
+        const $form = $('#lessonmenu-edit-structure-form');
+        $form.trigger('submit');
+
+    });
+
+    // Apply the initial indentation.
+    $editorContainer.find('[data-type="page"]').each((index, element) => {
+        const $element = $(element);
+        const indentation = $element.data('indentation') || 0;
+        setIdentation($element, indentation);
+    });
+
     // Create the change content type modal.
     const $iconModal = $('#lessonmenu-change-icon-modal');
     ModalFactory.create({
@@ -151,7 +282,7 @@ export const init = async() => {
         modal.getRoot().find('#lessonmenu-change-icon-select > li').on('click', event => {
             event.preventDefault();
             const $selected = $(event.currentTarget);
-            const code = $selected.attr('value');
+            const code = $selected.data('value');
 
             if ($currentItem && code) {
                 // Update the item icon.
@@ -162,6 +293,7 @@ export const init = async() => {
                 }
                 // Update the data attribute.
                 $currentItem.attr('data-contenttype', code);
+                $currentItem.data('contenttype', code);
             }
 
             $currentItem = null;
@@ -207,4 +339,18 @@ const newSection = (title) => {
         deletesection(event);
     });
     return $newitem;
+};
+
+/**
+ * Set the indentation of an item.
+ *
+ * @param {object} $item
+ * @param {number} indentation
+ */
+const setIdentation = ($item, indentation) => {
+    $item.data('indentation', indentation);
+    $item.attr('data-indentation', indentation);
+
+    // Add +1 level of indentation (20px per level) including the initial padding.
+    $item.css('padding-left', (20 * (indentation + 1)) + 'px');
 };

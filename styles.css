@@ -46,7 +46,7 @@
     box-shadow: 0 0 5px var(--gray);
     display: flex;
     align-items: stretch;
-    justify-content: space-between;
+    justify-content: center;
     gap: 10px;
     flex-wrap: wrap;
     flex-direction: row;
@@ -97,6 +97,7 @@
 .lessonmenu-edit-structure-list-container [data-type="page"] {
     position: relative;
     padding-right: 150px;
+    padding-left: 20px;
 }
 
 .lessonmenu-structure-item-actions {
@@ -106,7 +107,7 @@
     transform: translateY(-50%);
 }
 
-.lessonmenu-structure-item-actions:not([data-indentation="0"]) [data-action="moveleft"] {
+#lessonmenu-editor [data-indentation="0"] .lessonmenu-structure-item-actions [data-action="moveleft"] {
     opacity: 0.5;
     pointer-events: none;
 }
@@ -117,4 +118,31 @@
 
 .lessonmenu-structure-item-actions .icon {
     margin: 0;
+}
+
+.lessonmenu-structure-item-actions [data-action="duration"] {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    cursor: default;
+    color: var(--primaryreverse, #fff);
+    background-color: var(--primary, #0073e6);
+}
+
+.lessonmenu-structure-item-actions [data-action="duration"] input {
+    width: 50px;
+    border: none;
+    background-color: transparent;
+    color: var(--primaryreverse, #fff);
+    box-shadow: none;
+    padding: 0;
+    text-align: center;
+}
+
+.lessonmenu-structure-item-actions [data-action="duration"] input:focus {
+    outline: none;
+    border-bottom: 1px solid var(--primaryreverse, #fff);
 }
