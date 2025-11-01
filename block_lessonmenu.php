@@ -96,12 +96,14 @@ class block_lessonmenu extends block_base {
 
         if (isset($this->config->htmlfooter)) {
             // Rewrite url.
-            $htmlfooter = file_rewrite_pluginfile_urls($this->config->htmlfooter,
-                                                                     'pluginfile.php',
-                                                                     $this->context->id,
-                                                                     'block_lessonmenu',
-                                                                     'content_footer',
-                                                                     0);
+            $htmlfooter = file_rewrite_pluginfile_urls(
+                $this->config->htmlfooter,
+                'pluginfile.php',
+                $this->context->id,
+                'block_lessonmenu',
+                'content_footer',
+                0
+            );
             // Default to FORMAT_HTML.
             $htmlfooterformat = FORMAT_HTML;
             // Check to see if the format has been properly set on the config.
@@ -179,14 +181,22 @@ class block_lessonmenu extends block_base {
         $config = clone($data);
 
         // Move embedded files into a proper filearea and adjust HTML links to match.
-        $config->htmlfooter = file_save_draft_area_files($data->htmlfooter['itemid'],
-                              $this->context->id,
-                              'block_lessonmenu',
-                              'content_footer',
-                              0,
-                              ['subdirs' => true],
-                              $data->htmlfooter['text']);
+        $config->htmlfooter = file_save_draft_area_files(
+            $data->htmlfooter['itemid'],
+            $this->context->id,
+            'block_lessonmenu',
+            'content_footer',
+            0,
+            ['subdirs' => true],
+            $data->htmlfooter['text']
+        );
         $config->htmlfooterformat = $data->htmlfooter['format'];
+
+        // If codemirror was used, extract the CSS text.
+        if (is_array($config->css) && isset($config->css['text'])) {
+            $config->css = $config->css['text'];
+        }
+
         parent::instance_config_save($config, $nolongerused);
     }
 }

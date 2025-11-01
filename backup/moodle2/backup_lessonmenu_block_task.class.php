@@ -14,16 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * @package    block_lessonmenu
- * @copyright  2025 David Herney @ BambuCo
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * Specialised backup task for the block
  * (requires encode_content_links in some configdata attrs)
  *
+ * @package    block_lessonmenu
  * @copyright 2025 David Herney @ BambuCo
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -73,8 +70,7 @@ class backup_lessonmenu_block_task extends backup_block_task {
      *
      * @param string $content
      */
-    static public function encode_content_links($content) {
+    public static function encode_content_links($content) {
         return $content; // No special encoding of links.
     }
 }
-

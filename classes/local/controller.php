@@ -133,7 +133,7 @@ class controller {
             $menuitems = [
                 (object)[
                     'title' => null,
-                    'items' => $items
+                    'items' => $items,
                 ],
             ];
         } else {
@@ -175,7 +175,6 @@ class controller {
         $attrsitem = ['pageid', 'contenttype', 'duration', 'indentation'];
 
         foreach ($structure as $section) {
-
             // Check if exist not allowed attributes.
             $sectionattrs = array_keys(get_object_vars($section));
             foreach ($attrs as $attr) {
@@ -193,7 +192,6 @@ class controller {
             }
 
             foreach ($section->items as $item) {
-
                 // Check if exist not allowed attributes.
                 $itemattrs = array_keys(get_object_vars($item));
                 foreach ($attrsitem as $attr) {

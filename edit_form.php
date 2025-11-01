@@ -99,12 +99,12 @@ class block_lessonmenu_edit_form extends block_edit_form {
     }
 
     /**
-     * Set the default values for the form.
+     * Load in existing data as form defaults
      *
      * @param stdClass $defaults The default values.
      * @return void
      */
-    function set_data($defaults) {
+    public function set_data($defaults) {
         if (!empty($this->block->config) && !empty($this->block->config->htmlfooter)) {
             $htmlfooter = $this->block->config->htmlfooter;
             $draftideditor = file_get_submitted_draft_itemid('config_htmlfooter');
@@ -130,11 +130,27 @@ class block_lessonmenu_edit_form extends block_edit_form {
             $htmlfooter = '';
         }
 
+        if (!empty($this->block->config) && !empty($this->block->config->css)) {
+            $css = $this->block->config->css;
+            if (is_array($css)) {
+                $css = $css['text'];
+            }
+
+            if (\block_lessonmenu\local\controller::codemirror_present()) {
+                $defaults->config_css['text'] = $css;
+                $defaults->config_css['format'] = \codemirror_texteditor::FORMAT_CSS;
+                unset($this->block->config->css);
+            }
+        } else {
+            $css = '';
+        }
+
         // Have to delete structure here because is edited in a different form.
         unset($this->block->config->structure);
 
         // Have to delete html here, otherwise parent::set_data will empty content of editors.
         unset($this->block->config->htmlfooter);
+
         parent::set_data($defaults);
 
         if (!isset($this->block->config)) {
@@ -142,5 +158,6 @@ class block_lessonmenu_edit_form extends block_edit_form {
         }
 
         $this->block->config->htmlfooter = $htmlfooter;
+        $this->block->config->css = $css;
     }
 }
