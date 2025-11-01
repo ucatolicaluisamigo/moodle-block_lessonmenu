@@ -33,6 +33,8 @@ var strings = [
     {key: 'invalidindentation', component: 'block_lessonmenu'},
     {key: 'invalidindentationtitle', component: 'block_lessonmenu'}
 ];
+
+// Store loaded strings.
 var s = [];
 
 /**
