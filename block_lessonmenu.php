@@ -58,7 +58,7 @@ class block_lessonmenu extends block_base {
      *
      * @return void
      */
-    function specialization() {
+    public function specialization() {
         if (isset($this->config->title)) {
             $this->title = $this->title = format_string($this->config->title, true, ['context' => $this->context]);
         }
@@ -131,7 +131,8 @@ class block_lessonmenu extends block_base {
         }
 
         if (!empty($this->config->css)) {
-            $this->content->footer .= \html_writer::tag('style', $this->config->css, ['type' => 'text/css']);
+            $css = is_array($this->config->css) ? $this->config->css['text'] : $this->config->css;
+            $this->content->footer .= \html_writer::tag('style', $css, ['type' => 'text/css']);
         }
 
         return $this->content;

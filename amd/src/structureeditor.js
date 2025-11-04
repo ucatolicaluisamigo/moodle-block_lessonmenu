@@ -261,6 +261,7 @@ export const init = async() => {
             }
         });
 
+        // Update the structure textarea with the new structure.
         const $structureTextarea = $('textarea[name="structure"]');
         $structureTextarea.val(JSON.stringify(menuitems));
 

@@ -17,10 +17,45 @@
 {{!
     @template block_lessonmenu/menu
 
-    TODO describe template menu
+    Template for lesson menu block display.
 
     Example context (json):
     {
+        "progress": 75,
+        "stats": {
+            "timespent": "13",
+            "totaltime": "120",
+            "points": 80
+        },
+        "menuitems": [
+            {
+                "title": "Section 1",
+                "completed": true,
+                "collapsed": false,
+                "items": [
+                    {
+                        "pageid": 1,
+                        "indentation": 0,
+                        "duration": "5",
+                        "contenttypeinfo": {
+                            "code": "page",
+                            "label": "Page",
+                            "icon": "i/page"
+                        },
+                        "page": {
+                            "title": "Introduction",
+                            "url": "http://example.com/mod/lesson/view.php?id=1"
+                        },
+                        "iscurrent": false,
+                        "visited": true,
+                        "blocked": false,
+                        "displaytime": true,
+                        "index": 0,
+                        "contenttype": "page"
+                    }
+                ]
+            }
+        ]
     }
 }}
 <div class="lessonmenu-structure-container">
