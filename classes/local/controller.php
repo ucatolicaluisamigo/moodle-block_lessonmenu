@@ -134,19 +134,92 @@ class controller {
                 (object)[
                     'title' => null,
                     'items' => $items,
+                    'index' => 0,
                 ],
             ];
         } else {
+            $contenttypes = self::get_content_types();
+            $rootsection = null;
+            $sectionindex = 0;
             // Link pages to menu items.
             foreach ($menuitems as $menuitem) {
+                if ($menuitem->title === null) {
+                    $rootsection = $menuitem;
+                    $rootsection->index = 0;
+                } else {
+                    $sectionindex++;
+                    $menuitem->index = $sectionindex;
+                }
+
+                // Adjust indentation levels to ensure they don't skip levels.
+                $indentation = -1;
+
                 foreach ($menuitem->items as $key => $item) {
                     if (isset($pages[$item->pageid])) {
                         $item->page = $pages[$item->pageid];
+                        if (($item->indentation - $indentation) > 1) {
+                            $item->indentation = $indentation + 1;
+                        } else {
+                            $indentation = $item->indentation;
+                        }
+
+                        if (isset($contenttypes[$item->contenttype])) {
+                            $item->contenttypeinfo = $contenttypes[$item->contenttype];
+                        } else {
+                            $item->contenttypeinfo = null;
+                        }
                     } else {
                         // The page was deleted, remove from menu.
                         unset($menuitem->items[$key]);
                     }
                 }
+            }
+
+            $orphans = [];
+            foreach ($pages as $page) {
+                $found = false;
+                foreach ($menuitems as $menuitem) {
+                    foreach ($menuitem->items as $item) {
+                        if ($item->pageid == $page->id) {
+                            $found = true;
+                            break 2;
+                        }
+                    }
+                }
+
+                if (!$found) {
+                    $orphans[] = $page;
+                }
+            }
+
+            if (!isset($rootsection)) {
+                $rootsection = (object)[
+                    'title' => null,
+                    'items' => [],
+                    'index' => 0,
+                ];
+
+                // Add root section at the beginning.
+                $menuitems = [$rootsection] + $menuitems;
+            } else if (empty($rootsection->items)) {
+                // Ensure items is an array because JSON decode may set it to null or empty object.
+                $rootsection->items = [];
+            }
+
+            foreach ($orphans as $key => $page) {
+                $index = count($rootsection->items) + 1;
+                $orphansitem = (object)[
+                    'index' => $index,
+                    'pageid' => $page->id,
+                    'page' => $page,
+                    'contenttype' => '',
+                    'duration' => 0,
+                    'indentation' => 0,
+                    'completed' => false,
+                    'contenttypeinfo' => null,
+                ];
+
+                $rootsection->items[] = $orphansitem;
             }
         }
 
@@ -214,9 +287,6 @@ class controller {
                 if (!is_string($item->contenttype)) {
                     return false;
                 }
-                if (!is_numeric($item->duration)) {
-                    return false;
-                }
                 if (!is_numeric($item->indentation)) {
                     return false;
                 }
@@ -235,5 +305,21 @@ class controller {
         $pluginmanager = \core_plugin_manager::instance();
         $plugins = $pluginmanager->get_enabled_plugins('editor');
         return in_array('codemirror', $plugins);
+    }
+
+    /**
+     * Get block contents as HTML.
+     *
+     * @param int $instanceid The block instance id.
+     * @param object $lesson The lesson object.
+     * @return string The rendered HTML content.
+     */
+    public static function get_block_contents(int $instanceid, object $lesson): string {
+        global $PAGE;
+
+        $renderable = new \block_lessonmenu\output\menu($instanceid, $lesson);
+        $renderer = $PAGE->get_renderer('block_lessonmenu');
+
+        return $renderer->render($renderable);
     }
 }

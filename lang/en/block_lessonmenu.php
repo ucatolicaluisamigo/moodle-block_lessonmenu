@@ -26,6 +26,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['addsections'] = 'Add sections';
+$string['blocked'] = 'Blocked';
 $string['changecontenttype'] = 'Change type';
 $string['configcss'] = 'Custom CSS';
 $string['configdisplayquestions'] = 'Display question pages';
@@ -52,4 +53,8 @@ $string['lessonmenu:addinstance'] = 'Add a new Lesson menu block';
 $string['lessonmenu:myaddinstance'] = 'Add a new Lesson menu block to Dashboard';
 $string['newsection'] = 'New section';
 $string['pluginname'] = 'Lesson menu';
+$string['points'] = 'Points';
 $string['privacy:metadata'] = 'The Lesson menu plugin doesn\'t store any personal data.';
+$string['sectioncompleted'] = 'Completed';
+$string['timespent'] = 'Time spent';
+$string['visited'] = 'Visited';

@@ -1,0 +1,95 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_lessonmenu/menu
+
+    TODO describe template menu
+
+    Example context (json):
+    {
+    }
+}}
+<div class="lessonmenu-structure-container">
+    <div class="lessonmenu-structure-progress" role="progressbar" aria-valuenow="{{progress}}" aria-valuemin="0" aria-valuemax="100">
+        <div class="lessonmenu-structure-progress-bar" style="width: {{progress}}%;"></div>
+        <span class="lessonmenu-structure-progress-label" style="width: {{progress}}%;">{{progress}}%</span>
+    </div>
+    {{#stats}}
+        <div class="lessonmenu-structure-stats">
+            <span class="lessonmenu-structure-stat-timespent">
+                {{#pix}} e/insert_time {{/pix}} {{#str}}timespent, block_lessonmenu{{/str}}
+                <em>{{timespent}} / {{totaltime}} {{#str}}durationshort, block_lessonmenu{{/str}}</em>
+            </span>
+            <span class="lessonmenu-structure-stat-points">
+                {{#pix}} t/approve {{/pix}} {{#str}}points, block_lessonmenu{{/str}} <em>{{points}}%</em>
+            </span>
+        </div>
+    {{/stats}}
+    <div class="lessonmenu-structure-list-container">
+        <div id="lessonmenu-tree" class="accordion">
+        {{#menuitems}}
+            <div class="accordion-item {{#completed}}section-completed{{/completed}}">
+                {{#title}}
+                    <h2 class="accordion-header">
+                        <button class="accordion-button" type="button" data-toggle="collapse" data-target="#collapse_{{index}}" aria-expanded="false" aria-controls="collapse_{{index}}">
+                            {{title}}
+                            {{#completed}}
+                                <span class="completedlabel">{{#str}}sectioncompleted, block_lessonmenu{{/str}}</span>
+                            {{/completed}}
+                        </button>
+                    </h2>
+                {{/title}}
+                <div id="collapse_{{index}}" class="accordion-collapse {{^collapsed}}show{{/collapsed}} collapse" aria-labelledby="heading_{{index}}">
+                    <ul class="accordion-body list-group">
+                    {{#items}}
+                        <li class="list-group-item {{#iscurrent}}current{{/iscurrent}} {{#visited}}visited{{/visited}} {{#blocked}}blocked{{/blocked}} {{#displaytime}}displaytime{{/displaytime}}" data-pageid="{{pageid}}" data-type="page" data-contenttype="{{contenttype}}" data-indentation="{{indentation}}" data-index="{{index}}" style="padding-left: calc(0.5rem + ({{indentation}} * 1.5rem));">
+                            {{#visited}}
+                                <span class="item-icon" title="{{#str}}visited, block_lessonmenu{{/str}}">{{#pix}} i/checkedcircle {{/pix}}</span>
+                            {{/visited}}
+                            {{^visited}}
+                                {{#contenttypeinfo}}
+                                    <span class="item-icon" title="{{label}}">{{#pix}} {{icon}} {{/pix}}</span>
+                                {{/contenttypeinfo}}
+                                {{^contenttypeinfo}}
+                                    <span class="item-icon">{{#pix}} i/uncheckedcircle {{/pix}}</span>
+                                {{/contenttypeinfo}}
+                            {{/visited}}
+                            {{#page}}
+                                <span class="item-title">
+                                {{#url}}<a href="{{{url}}}">{{/url}}
+                                    {{title}}
+                                    {{#blocked}}
+                                        <span class="blockedlabel" title="{{#str}}blocked, block_lessonmenu{{/str}}">{{#pix}} i/lock {{/pix}}</span>
+                                    {{/blocked}}
+                                {{#url}}</a>{{/url}}
+                                </span>
+                            {{/page}}
+                            {{#displaytime}}
+                            <div class="lessonmenu-structure-moreinfo">
+                                <span>{{duration}}</span>
+                                {{#str}}durationshort, block_lessonmenu{{/str}}
+                            </div>
+                            {{/displaytime}}
+                        </li>
+                    {{/items}}
+                    </ul>
+                </div>
+            </div>
+        {{/menuitems}}
+        </div>
+    </div>
+</div>

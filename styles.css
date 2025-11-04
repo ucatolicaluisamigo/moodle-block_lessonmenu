@@ -1,4 +1,6 @@
-.lessonmenu-edit-structure-container {
+/* stylelint-disable declaration-no-important */
+/** Lesson Menu Editor Styles */
+#lessonmenu-edit-structure-container {
     padding: 15px;
     margin-top: 20px;
     background-color: var(--secondary, #f9f9f9);
@@ -32,7 +34,7 @@
     margin: 0;
 }
 
-.lessonmenu-edit-structure-container .item-icon {
+#lessonmenu-edit-structure-container .item-icon {
     cursor: pointer;
 }
 
@@ -145,4 +147,178 @@
 .lessonmenu-structure-item-actions [data-action="duration"] input:focus {
     outline: none;
     border-bottom: 1px solid var(--primaryreverse, #fff);
+}
+
+/* Lesson Menu Block Styles */
+.block_lessonmenu .block-controls.header {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.block_lessonmenu .card-body {
+    padding: 3px !important;
+}
+
+.block_lessonmenu h3.card-title {
+    display: block !important;
+    border-radius: 5px 5px 0 0;
+    margin-bottom: 0;
+}
+
+.block_lessonmenu .card-text.content {
+    margin-top: 0 !important;
+}
+
+.block_lessonmenu .list-group-item {
+    background-color: #f8f8f8;
+    position: relative;
+    display: flex;
+    font-size: 14px;
+    line-height: 17px;
+    padding: 8px 5px;
+}
+
+.block_lessonmenu .list-group-item.displaytime {
+    padding-right: 55px;
+}
+
+.block_lessonmenu .lessonmenu-structure-moreinfo {
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 12px;
+    background-color: var(--secondary, #0073e6);
+    border-radius: 3px;
+    padding: 0 5px;
+}
+
+.block_lessonmenu .list-group-item:first-child,
+.block_lessonmenu .list-group-item:last-child {
+    border-radius: 0;
+}
+
+.block_lessonmenu .list-group-item.current {
+    background-color: #fff;
+    border-left: var(--activedefault, #64bf8d) 4px solid;
+}
+
+.block_lessonmenu .list-group-item.visited .item-icon {
+    color: var(--activedefault, #64bf8d);
+    font-size: 20px;
+}
+
+.block_lessonmenu .list-group-item.visited .lessonmenu-structure-moreinfo {
+    background-color: var(--activedefault, #d9f4f2);
+}
+
+.block_lessonmenu .completedlabel {
+    background-color: #c0fbdb;
+    color: #0c793d;
+    border-radius: 5px;
+    padding: 3px 5px;
+    font-size: 12px;
+    font-weight: normal;
+    margin: 0 5px;
+}
+
+.block_lessonmenu .blockedlabel {
+    color: #b7b7b7;
+}
+
+/* Progress */
+.lessonmenu-structure-progress {
+    background-color: var(--secondary, #eeecec);
+    position: relative;
+}
+
+.lessonmenu-structure-progress-bar {
+    background-color: #f06603;
+    overflow: hidden;
+    height: 20px;
+}
+
+.lessonmenu-structure-progress-label {
+    text-align: center;
+    color: #fff;
+    font-weight: bold;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    min-width: 40px;
+}
+
+/* Stats */
+.lessonmenu-structure-stats {
+    padding: 5px;
+    font-size: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.lessonmenu-structure-stats .icon {
+    margin: 0;
+}
+
+.lessonmenu-structure-stats em {
+    font-style: normal;
+    color: #1f6c85;
+}
+
+/* Bootstrap 5 styles */
+.block_lessonmenu .accordion-button {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 0.5rem 1.25rem;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #212529;
+    text-align: left;
+    background-color: var(--secondary, #eeecec);
+    border: 0;
+    border-radius: 0;
+    overflow-anchor: none;
+    transition:
+        color .15s ease-in-out,
+        background-color .15s ease-in-out,
+        border-color .15s ease-in-out,
+        box-shadow .15s ease-in-out,
+        border-radius .15s ease;
+}
+
+.block_lessonmenu .accordion-button::after {
+    flex-shrink: 0;
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-left: auto;
+    content: "";
+    /* stylelint-disable-next-line function-url-scheme-disallowed-list */
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23212529'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-size: 1.25rem;
+    transition: transform .2s ease-in-out;
+    transform: rotate(-180deg);
+}
+
+.block_lessonmenu .accordion-button.collapsed::after {
+    transform: rotate(0deg);
+}
+
+.block_lessonmenu .accordion-item:first-of-type .accordion-button {
+    border-top-left-radius: calc(.25rem - 1px);
+    border-top-right-radius: calc(.25rem - 1px);
+}
+
+.block_lessonmenu .accordion-header {
+    margin-bottom: 0;
+    border-top: 1px solid #dedede;
 }

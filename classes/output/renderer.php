@@ -35,4 +35,14 @@ class renderer extends plugin_renderer_base {
     public function render_editstructure(editstructure $editstructure): string {
         return $this->render_from_template('block_lessonmenu/editor', $editstructure->export_for_template($this));
     }
+
+    /**
+     * Return the template content for the block.
+     *
+     * @param menu $menu The menu renderable
+     * @return string HTML string
+     */
+    public function render_menu(menu $menu): string {
+        return $this->render_from_template('block_lessonmenu/menu', $menu->export_for_template($this));
+    }
 }

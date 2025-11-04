@@ -54,6 +54,17 @@ class block_lessonmenu extends block_base {
     }
 
     /**
+     * Set the block title from config data.
+     *
+     * @return void
+     */
+    function specialization() {
+        if (isset($this->config->title)) {
+            $this->title = $this->title = format_string($this->config->title, true, ['context' => $this->context]);
+        }
+    }
+
+    /**
      * This block allows instance configuration.
      *
      * @return bool
@@ -68,7 +79,7 @@ class block_lessonmenu extends block_base {
      * @return stdClass
      */
     public function get_content() {
-        global $lesson;
+        global $lesson, $pageid;
 
         if ($this->content !== null) {
             return $this->content;
@@ -83,16 +94,17 @@ class block_lessonmenu extends block_base {
             return $this->content;
         }
 
+        $currentpageid = optional_param('pageid', $pageid ?? 0, PARAM_INT);
+
+        if (empty($currentpageid)) {
+            return $this->content;
+        }
+
         $filteropt = new \stdClass();
         $filteropt->overflowdiv = true;
         $filteropt->noclean = true;
 
-        $displayleft = $lesson->displayleft;
-        $lesson->displayleft = true;
-        $bc = lesson_menu_block_contents($this->page->cm->id, $lesson);
-        $lesson->displayleft = $displayleft;
-
-        $this->content->text = $bc ? $bc->content : '';
+        $this->content->text = \block_lessonmenu\local\controller::get_block_contents($this->instance->id, $lesson);
 
         if (isset($this->config->htmlfooter)) {
             // Rewrite url.
@@ -116,6 +128,10 @@ class block_lessonmenu extends block_base {
             }
 
             $this->content->footer .= format_text($htmlfooter, $htmlfooterformat, $filteropt);
+        }
+
+        if (!empty($this->config->css)) {
+            $this->content->footer .= \html_writer::tag('style', $this->config->css, ['type' => 'text/css']);
         }
 
         return $this->content;

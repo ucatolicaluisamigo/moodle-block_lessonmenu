@@ -64,24 +64,6 @@ class editstructure implements renderable, templatable {
         $defaultsections = controller::get_default_sections();
         $menuitems = controller::get_menu_items($instance, $this->lesson);
 
-        foreach ($menuitems as $section) {
-            // Adjust indentation levels to ensure they don't skip levels.
-            $indentation = -1;
-            foreach ($section->items as $item) {
-                if (($item->indentation - $indentation) > 1) {
-                    $item->indentation = $indentation + 1;
-                } else {
-                    $indentation = $item->indentation;
-                }
-
-                if (isset($contenttypes[$item->contenttype])) {
-                    $item->contenttypeinfo = $contenttypes[$item->contenttype];
-                } else {
-                    $item->contenttypeinfo = null;
-                }
-            }
-        }
-
         $editurl = (string)(new \moodle_url('/blocks/lessonmenu/edit.php'));
         return [
             'instanceid' => $this->instanceid,

@@ -145,9 +145,6 @@ class block_lessonmenu_edit_form extends block_edit_form {
             $css = '';
         }
 
-        // Have to delete structure here because is edited in a different form.
-        unset($this->block->config->structure);
-
         // Have to delete html here, otherwise parent::set_data will empty content of editors.
         unset($this->block->config->htmlfooter);
 

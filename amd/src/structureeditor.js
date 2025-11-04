@@ -240,6 +240,12 @@ export const init = async() => {
                     "indentation": $element.data('indentation')
                 };
 
+                if (item.duration === '' || isNaN(item.duration) || item.duration < 0) {
+                    item.duration = 0;
+                } else {
+                    item.duration = parseInt(item.duration, 10);
+                }
+
                 if ((item.indentation - indentation) > 1) {
                     // Invalid indentation, notify and stop.
                     Notification.alert(
