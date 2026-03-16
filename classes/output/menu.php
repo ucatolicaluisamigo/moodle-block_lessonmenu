@@ -128,7 +128,11 @@ class menu implements renderable, templatable {
             }
 
             $completed = 0;
-            foreach ($section->items as $itemkey => $item) {
+            $isresume = ((int)$configdata->displayquestions === controller::DISPLAYQUESTIONS_RESUME);
+            $questionbuffer = [];
+            $newitems = [];
+
+            foreach ($section->items as $item) {
                 $item->iscurrent = false;
                 if (!empty($currentpageid)) {
                     $item->iscurrent = $item->pageid == $currentpageid;
@@ -136,12 +140,39 @@ class menu implements renderable, templatable {
 
                 $totaltime += (int)$item->duration;
 
-                if (!$configdata->displayquestions && $item->page->qtype != 20) {
-                    unset($section->items[$itemkey]);
+                $isquestion = ($item->page->qtype != 20);
+
+                // Mode NO: remove question pages.
+                if (!$configdata->displayquestions && $isquestion) {
                     continue;
                 }
 
                 $item->visited = isset($visitedpages[$item->pageid]) || isset($attemptquestions[$item->pageid]);
+
+                // Mode RESUME: accumulate consecutive questions.
+                if ($isresume && $isquestion) {
+                    $questionbuffer[] = $item;
+                    continue;
+                }
+
+                // If we reach a content page and there are buffered questions, flush them as a single item.
+                if ($isresume && !empty($questionbuffer)) {
+                    $resumeitem = $this->flush_question_buffer(
+                        $questionbuffer,
+                        $visitedpages,
+                        $attemptquestions,
+                        $previousitem,
+                        $freenavigation,
+                        $canedit
+                    );
+                    $newitems[] = $resumeitem;
+                    if ($resumeitem->visited) {
+                        $completed++;
+                        $totalvisited++;
+                    }
+                    $previousitem = $resumeitem;
+                    $questionbuffer = [];
+                }
 
                 if ($item->visited) {
                     $completed++;
@@ -160,7 +191,28 @@ class menu implements renderable, templatable {
                 }
 
                 $previousitem = $item;
+                $newitems[] = $item;
             }
+
+            // Flush remaining buffered questions at end of section.
+            if ($isresume && !empty($questionbuffer)) {
+                $resumeitem = $this->flush_question_buffer(
+                    $questionbuffer,
+                    $visitedpages,
+                    $attemptquestions,
+                    $previousitem,
+                    $freenavigation,
+                    $canedit
+                );
+                $newitems[] = $resumeitem;
+                if ($resumeitem->visited) {
+                    $completed++;
+                    $totalvisited++;
+                }
+                $previousitem = $resumeitem;
+            }
+
+            $section->items = $newitems;
 
             if (empty($section->items)) {
                 unset($menuitems[$key]);
@@ -199,5 +251,60 @@ class menu implements renderable, templatable {
             'progress' => $this->lesson->calculate_progress(),
             'stats' => $stats,
         ];
+    }
+
+    /**
+     * Flush buffered question items into a single resume item.
+     *
+     * @param array $buffer The buffered question items.
+     * @param array $visitedpages Pages visited by the user.
+     * @param array $attemptquestions Questions attempted by the user.
+     * @param object|null $previousitem The previous item in the menu.
+     * @param bool $freenavigation Whether free navigation is enabled.
+     * @param bool $canedit Whether the user can edit the lesson.
+     * @return object The resume item.
+     */
+    private function flush_question_buffer(
+        array $buffer,
+        array $visitedpages,
+        array $attemptquestions,
+        ?object $previousitem,
+        bool $freenavigation,
+        bool $canedit
+    ): object {
+        $firstitem = $buffer[0];
+        $count = count($buffer);
+
+        $allvisited = true;
+        $anycurrent = false;
+        foreach ($buffer as $bitem) {
+            $bvisited = isset($visitedpages[$bitem->pageid]) || isset($attemptquestions[$bitem->pageid]);
+            if (!$bvisited) {
+                $allvisited = false;
+            }
+            if (!empty($bitem->iscurrent)) {
+                $anycurrent = true;
+            }
+        }
+
+        $resumeitem = $firstitem;
+        $resumeitem->finaltitle = get_string('questionsresume', 'block_lessonmenu', $count);
+        $resumeitem->visited = $allvisited;
+        $resumeitem->iscurrent = $anycurrent;
+        $resumeitem->isresume = true;
+        $resumeitem->duration = array_sum(array_map(function($i) { return (int)$i->duration; }, $buffer));
+
+        $resumeitem->blocked = !(
+            $freenavigation ||
+            $resumeitem->visited ||
+            ($previousitem && ($previousitem->visited || ($previousitem->page->qtype == 20 && $previousitem->iscurrent)))
+        );
+
+        if ($canedit || (!$resumeitem->iscurrent && !$resumeitem->blocked)) {
+            $params = ['id' => $this->lesson->cm->id, 'pageid' => $firstitem->pageid];
+            $resumeitem->url = (string)(new \moodle_url('/mod/lesson/view.php', $params));
+        }
+
+        return $resumeitem;
     }
 }

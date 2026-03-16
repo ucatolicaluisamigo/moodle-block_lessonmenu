@@ -26,6 +26,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['addsections'] = 'Add sections';
+$string['autoorder'] = 'Auto order';
 $string['blocked'] = 'Blocked';
 $string['changecontenttype'] = 'Change type';
 $string['configcss'] = 'Custom CSS';
@@ -52,14 +53,14 @@ $string['invalidstructure'] = 'The provided structure is invalid.';
 $string['lessonmenu:addinstance'] = 'Add a new Lesson menu block';
 $string['lessonmenu:myaddinstance'] = 'Add a new Lesson menu block to Dashboard';
 $string['newsection'] = 'New section';
+$string['orphanpages'] = 'Orphan pages';
+$string['pagesdisorderedwarning'] = 'The order of the pages in the lesson has changed since the last time the menu structure was edited. You can apply a automatically suggested order.';
 $string['pluginname'] = 'Lesson menu';
 $string['points'] = 'Points';
 $string['privacy:metadata'] = 'The Lesson menu plugin doesn\'t store any personal data.';
+$string['questionsresume'] = 'Quiz ({$a} questions)';
+$string['resetstructure'] = 'Reset structure';
+$string['resumequestionsmode'] = 'Resume';
 $string['sectioncompleted'] = 'Completed';
 $string['timespent'] = 'Time spent';
 $string['visited'] = 'Visited';
-$string['orphanpages'] = 'Orphan pages';
-$string['pagesdisorderedwarning'] = 'The order of the pages in the lesson has changed since the last time the menu structure was edited. You can apply a automatically suggested order.';
-$string['resetstructure'] = 'Reset structure';
-$string['autoorder'] = 'Auto order';
-$string['resumequestionsmode'] = 'Resume';

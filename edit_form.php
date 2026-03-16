@@ -142,14 +142,14 @@ class block_lessonmenu_edit_form extends block_edit_form {
             if (is_array($css)) {
                 $css = $css['text'];
             }
-
-            if (\block_lessonmenu\local\controller::codemirror_present()) {
-                $defaults->config_css['text'] = $css;
-                $defaults->config_css['format'] = \codemirror_texteditor::FORMAT_CSS;
-                unset($this->block->config->css);
-            }
         } else {
             $css = '';
+        }
+
+        if (\block_lessonmenu\local\controller::codemirror_present()) {
+            $defaults->config_css['text'] = $css;
+            $defaults->config_css['format'] = \codemirror_texteditor::FORMAT_CSS;
+            unset($this->block->config->css);
         }
 
         // Have to delete html here, otherwise parent::set_data will empty content of editors.

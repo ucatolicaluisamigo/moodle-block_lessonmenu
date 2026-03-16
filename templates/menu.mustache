@@ -107,7 +107,8 @@
                             {{#page}}
                                 <span class="item-title">
                                 {{#url}}<a href="{{{url}}}">{{/url}}
-                                    {{title}}
+                                    {{#finaltitle}}{{.}}{{/finaltitle}}
+                                    {{^finaltitle}}{{title}}{{/finaltitle}}
                                     {{#blocked}}
                                         <span class="blockedlabel" title="{{#str}}blocked, block_lessonmenu{{/str}}">{{#pix}} i/lock {{/pix}}</span>
                                     {{/blocked}}
