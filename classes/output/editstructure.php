@@ -40,14 +40,20 @@ class editstructure implements renderable, templatable {
     private $lesson;
 
     /**
+     * @var object The course module object.
+     */
+    private $cm;
+
+    /**
      * Constructor.
      *
      * @param int $instanceid The block instance id.
      * @param object $lesson The lesson object.
      */
-    public function __construct(int $instanceid, object $lesson) {
+    public function __construct(int $instanceid, object $lesson, object $cm) {
         $this->instanceid = $instanceid;
         $this->lesson = $lesson;
+        $this->cm = $cm;
     }
 
     /**
@@ -59,12 +65,26 @@ class editstructure implements renderable, templatable {
     public function export_for_template(renderer_base $output): array {
         global $DB;
 
+        $reset = optional_param('reset', false, PARAM_BOOL);
         $instance = $DB->get_record('block_instances', ['id' => $this->instanceid, 'blockname' => 'lessonmenu'], '*', MUST_EXIST);
         $contenttypes = controller::get_content_types();
         $defaultsections = controller::get_default_sections();
-        $menuitems = controller::get_menu_items($instance, $this->lesson);
+        $menuitems = controller::get_menu_items($instance, $this->lesson, $reset);
 
+        $currentitem = 0;
+        $disorder = false;
+        foreach ($menuitems as $menuitem) {
+            foreach ($menuitem->items as $item) {
+                $item->disorder = $item->index != $currentitem;
+                $currentitem++;
+
+                if ($item->disorder) {
+                    $disorder = true;
+                }
+            }
+        }
         $editurl = (string)(new \moodle_url('/blocks/lessonmenu/edit.php'));
+        $lessonurl = (string)(new \moodle_url('/mod/lesson/view.php', ['id' => $this->cm->id]));
         return [
             'instanceid' => $this->instanceid,
             'menuitems' => $menuitems,
@@ -74,6 +94,8 @@ class editstructure implements renderable, templatable {
             'id' => $this->instanceid,
             'sesskey' => sesskey(),
             'editurl' => $editurl,
+            'disorder' => $disorder,
+            'lessonurl' => $lessonurl,
         ];
     }
 }

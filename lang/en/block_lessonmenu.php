@@ -30,7 +30,7 @@ $string['blocked'] = 'Blocked';
 $string['changecontenttype'] = 'Change type';
 $string['configcss'] = 'Custom CSS';
 $string['configdisplayquestions'] = 'Display question pages';
-$string['configdisplayquestions_help'] = 'If enabled, question pages will be displayed in the lesson menu block.';
+$string['configdisplayquestions_help'] = 'If enabled, question pages will be displayed in the lesson menu block. If "Resume mode" is selected, it will display one item with reference to the first question.';
 $string['configdisplaystats'] = 'Display statistics';
 $string['configdisplaytime'] = 'Display time';
 $string['configfreenavigation'] = 'Free navigation';
@@ -39,8 +39,8 @@ $string['configstartcollapsed'] = 'Start collapsed';
 $string['configtitle'] = 'Block title';
 $string['contenttypes'] = 'Content types';
 $string['contenttypes_help'] = 'Specify which content types should be shown in the lesson menu block. Enter one content type per line using the format "type|icon|label", where "type" is the content type name, "icon" is the corresponding icon name from the <a href="https://componentlibrary.moodle.com/admin/tool/componentlibrary/docspage.php/moodle/components/moodle-icons/" target="_blank">moodle pix library</a> and "label" is the display label for the content type (optional). For example:<br>
-video|core:e/insert_edit_video|Video content<br>
-audio|core:i/messagecontentaudio|Audio content';
+video|e/insert_edit_video|Video content<br>
+audio|i/messagecontentaudio|Audio content';
 $string['defaultsections'] = 'Default sections';
 $string['defaultsections_help'] = 'Define default sections to be included in the lesson menu block. Enter one section per line using the format:<br>
 Section group name|One section;Other section;Last section';
@@ -58,3 +58,8 @@ $string['privacy:metadata'] = 'The Lesson menu plugin doesn\'t store any persona
 $string['sectioncompleted'] = 'Completed';
 $string['timespent'] = 'Time spent';
 $string['visited'] = 'Visited';
+$string['orphanpages'] = 'Orphan pages';
+$string['pagesdisorderedwarning'] = 'The order of the pages in the lesson has changed since the last time the menu structure was edited. You can apply a automatically suggested order.';
+$string['resetstructure'] = 'Reset structure';
+$string['autoorder'] = 'Auto order';
+$string['resumequestionsmode'] = 'Resume';

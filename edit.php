@@ -92,7 +92,7 @@ $PAGE->set_title(get_string('editstructure', 'block_lessonmenu'));
 
 $PAGE->requires->js_call_amd('block_lessonmenu/structureeditor', 'init');
 
-$renderable = new \block_lessonmenu\output\editstructure($id, $lesson);
+$renderable = new \block_lessonmenu\output\editstructure($id, $lesson, $cm);
 $renderer = $PAGE->get_renderer('block_lessonmenu');
 
 echo $OUTPUT->header();

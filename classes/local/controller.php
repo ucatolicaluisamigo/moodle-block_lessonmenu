@@ -25,6 +25,25 @@ namespace block_lessonmenu\local;
  */
 class controller {
     /**
+     * Display modes for question pages in the lesson menu block.
+     *
+     * @var int Do not display question pages.
+     */
+    const DISPLAYQUESTIONS_NO = 0;
+
+    /**
+     * @var int Display question pages as normal items in the menu.
+     */
+    const DISPLAYQUESTIONS_YES = 1;
+
+    /**
+     * This is useful when there are many question pages and you want to avoid cluttering the menu.
+     *
+     * @var int Display one item for question pages that links to the first question page.
+     */
+    const DISPLAYQUESTIONS_RESUME = 2;
+
+    /**
      * Get available content types with their icons.
      * @return array Associative array of content types, their icons and labels.
      */
@@ -101,14 +120,14 @@ class controller {
      *
      * @param object $instance The block instance.
      * @param object $lesson The lesson object.
+     * @param bool $reset Whether to reset the structure to match the lesson pages order.
      * @return array List of menu items.
      */
-    public static function get_menu_items(object $instance, object $lesson): array {
-
+    public static function get_menu_items(object $instance, object $lesson, bool $reset = false): array {
         $configdata = empty($instance->configdata) ? (new \stdClass()) : unserialize(base64_decode($instance->configdata));
         $menuitems = [];
 
-        if (property_exists($configdata, 'structure')) {
+        if (!$reset && property_exists($configdata, 'structure')) {
             $menuitems = @json_decode($configdata->structure) ?? [];
         }
         $pages = $lesson->load_all_pages();
@@ -117,7 +136,6 @@ class controller {
             $items = [];
             $index = 0;
             foreach ($pages as $page) {
-                $index++;
                 $items[] = (object)[
                     'index' => $index,
                     'pageid' => $page->id,
@@ -128,6 +146,7 @@ class controller {
                     'completed' => false,
                     'contenttypeinfo' => null,
                 ];
+                $index++;
             }
 
             $menuitems = [
@@ -140,7 +159,11 @@ class controller {
         } else {
             $contenttypes = self::get_content_types();
             $rootsection = null;
+            $orphanssection = null;
             $sectionindex = 0;
+            $pageorder = array_flip(array_keys($pages));
+            $currentpage = 0;
+
             // Link pages to menu items.
             foreach ($menuitems as $menuitem) {
                 if ($menuitem->title === null) {
@@ -156,7 +179,10 @@ class controller {
 
                 foreach ($menuitem->items as $key => $item) {
                     if (isset($pages[$item->pageid])) {
+                        $currentpage++;
                         $item->page = $pages[$item->pageid];
+                        $item->index = $pageorder[$item->pageid] ?? PHP_INT_MAX;
+
                         if (($item->indentation - $indentation) > 1) {
                             $item->indentation = $indentation + 1;
                         } else {
@@ -173,6 +199,15 @@ class controller {
                         unset($menuitem->items[$key]);
                     }
                 }
+            }
+
+            // Reorder items within each section to match the order of $pages.
+            foreach ($menuitems as $menuitem) {
+                usort($menuitem->items, function ($a, $b) use ($pageorder) {
+                    $posa = $pageorder[$a->pageid] ?? PHP_INT_MAX;
+                    $posb = $pageorder[$b->pageid] ?? PHP_INT_MAX;
+                    return $posa <=> $posb;
+                });
             }
 
             $orphans = [];
@@ -206,20 +241,29 @@ class controller {
                 $rootsection->items = [];
             }
 
-            foreach ($orphans as $key => $page) {
-                $index = count($rootsection->items) + 1;
-                $orphansitem = (object)[
-                    'index' => $index,
-                    'pageid' => $page->id,
-                    'page' => $page,
-                    'contenttype' => '',
-                    'duration' => 0,
-                    'indentation' => 0,
-                    'completed' => false,
-                    'contenttypeinfo' => null,
+            if ($orphans) {
+                $orphanssection = (object)[
+                    'title' => get_string('orphanpages', 'block_lessonmenu'),
+                    'items' => [],
+                    'index' => count($menuitems) + 1,
                 ];
+                foreach ($orphans as $key => $page) {
+                    $sectionindex++;
+                    $index = $sectionindex;
+                    $orphansitem = (object)[
+                        'index' => $index,
+                        'pageid' => $page->id,
+                        'page' => $page,
+                        'contenttype' => '',
+                        'duration' => 0,
+                        'indentation' => 0,
+                        'completed' => false,
+                        'contenttypeinfo' => null,
+                    ];
 
-                $rootsection->items[] = $orphansitem;
+                    $orphanssection->items[] = $orphansitem;
+                }
+                $menuitems = array_merge($menuitems, [$orphanssection]);
             }
         }
 

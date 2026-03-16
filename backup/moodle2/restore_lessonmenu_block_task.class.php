@@ -45,6 +45,68 @@ class restore_lessonmenu_block_task extends restore_block_task {
     }
 
     /**
+     * Remap lesson page IDs stored in configdata->structure after restore.
+     *
+     * The menu structure stores page IDs that reference the original lesson pages.
+     * After a backup/restore (or duplication), the lesson pages get new IDs,
+     * so we need to update the references in the block's structure configuration.
+     */
+    public function after_restore() {
+        global $DB;
+
+        $blockid = $this->get_blockid();
+        $configdata = $DB->get_field('block_instances', 'configdata', ['id' => $blockid]);
+
+        if (empty($configdata)) {
+            return;
+        }
+
+        $config = $this->decode_configdata($configdata);
+
+        if (empty($config->structure)) {
+            return;
+        }
+
+        $structure = @json_decode($config->structure);
+
+        if (empty($structure) || !is_array($structure)) {
+            return;
+        }
+
+        $changed = false;
+        foreach ($structure as $section) {
+            if (empty($section->items) || !is_array($section->items)) {
+                continue;
+            }
+
+            foreach ($section->items as $key => $item) {
+                if (empty($item->pageid)) {
+                    continue;
+                }
+
+                $newpageid = restore_dbops::get_backup_ids_record($this->get_restoreid(), 'lesson_page', $item->pageid);
+                if ($newpageid && $newpageid->newitemid) {
+                    $item->pageid = (int) $newpageid->newitemid;
+                    $changed = true;
+                } else {
+                    // The page was not restored, remove the item.
+                    unset($section->items[$key]);
+                    $changed = true;
+                }
+            }
+
+            // Reindex items after possible removals.
+            $section->items = array_values($section->items);
+        }
+
+        if ($changed) {
+            $config->structure = json_encode($structure);
+            $configdata = base64_encode(serialize($config));
+            $DB->set_field('block_instances', 'configdata', $configdata, ['id' => $blockid]);
+        }
+    }
+
+    /**
      * Returns the array of file area names within the block context.
      *
      * @return array

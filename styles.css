@@ -179,6 +179,10 @@
     padding: 8px 5px;
 }
 
+.list-group-item.item-disordered {
+    background-color: var(--warning, #fff3cd);
+}
+
 .block_lessonmenu .list-group-item.displaytime {
     padding-right: 55px;
 }
@@ -204,13 +208,21 @@
     border-left: var(--activedefault, #64bf8d) 4px solid;
 }
 
+.block_lessonmenu .list-group-item.visited {
+    background-color: #fff;
+}
+
 .block_lessonmenu .list-group-item.visited .item-icon {
     color: var(--activedefault, #64bf8d);
     font-size: 20px;
 }
 
+.block_lessonmenu .list-group-item.current .lessonmenu-structure-moreinfo{
+    background-color: var(--lminfo, #fdf5d2);
+}
+
 .block_lessonmenu .list-group-item.visited .lessonmenu-structure-moreinfo {
-    background-color: var(--activedefault, #d9f4f2);
+    background-color: var(--activedefault, #d7f3f0);
 }
 
 .block_lessonmenu .completedlabel {

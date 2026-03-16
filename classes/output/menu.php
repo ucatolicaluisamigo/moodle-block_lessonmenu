@@ -151,7 +151,8 @@ class menu implements renderable, templatable {
                 $item->blocked = !(
                     $freenavigation ||
                     $item->visited ||
-                    ($previousitem && ($previousitem->visited || ($previousitem->page->qtype == 20 && $previousitem->iscurrent))));
+                    ($previousitem && ($previousitem->visited || ($previousitem->page->qtype == 20 && $previousitem->iscurrent)))
+                );
 
                 if ($canedit || (!$item->iscurrent && !$item->blocked)) {
                     $params = ['id' => $this->lesson->cm->id, 'pageid' => $item->pageid];
@@ -169,6 +170,16 @@ class menu implements renderable, templatable {
                 $section->items = array_values($section->items);
                 $section->completed = (count($section->items) == $completed);
                 $countpages += count($section->items);
+
+                // If the section contains the current item, force it to be expanded.
+                if ($section->collapsed) {
+                    foreach ($section->items as $item) {
+                        if (!empty($item->iscurrent)) {
+                            $section->collapsed = false;
+                            break;
+                        }
+                    }
+                }
             }
         }
 

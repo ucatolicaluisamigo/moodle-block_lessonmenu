@@ -55,6 +55,15 @@
         <textarea name="structure" class="hidden"></textarea>
     </form>
 
+    {{#disorder}}
+        <div class="alert alert-warning" role="alert">
+            {{#str}}pagesdisorderedwarning, block_lessonmenu{{/str}}
+            <button type="button" class="btn btn-secondary btn-sm" data-action="autoorder">
+                {{#str}}autoorder, block_lessonmenu{{/str}}
+            </button>
+        </div>
+    {{/disorder}}
+
     <div class="card lessonmenu-edit-structure-list-container">
         <ul id="lessonmenu-editor" class="list-group">
         {{#menuitems}}
@@ -72,7 +81,7 @@
                 </li>
             {{/title}}
             {{#items}}
-                <li class="list-group-item" data-pageid="{{pageid}}" data-type="page" data-contenttype="{{contenttype}}" data-indentation="{{indentation}}" data-index="{{index}}">
+                <li class="list-group-item {{#disorder}}item-disordered{{/disorder}}" data-pageid="{{pageid}}" data-type="page" data-contenttype="{{contenttype}}" data-indentation="{{indentation}}" data-index="{{index}}">
                     {{#contenttypeinfo}}
                         <span class="item-icon" title="{{label}}">{{#pix}} {{icon}} {{/pix}}</span>
                     {{/contenttypeinfo}}
@@ -124,9 +133,17 @@
             <div class="divider"></div>
         </div>
 
+        <a href="{{{editurl}}}?id={{id}}&reset=1" class="btn btn-info">
+            {{#str}}resetstructure, block_lessonmenu{{/str}}
+        </a>
+
         <button type="submit" class="btn btn-primary" data-action="save">
             {{#str}}savechanges, core{{/str}}
         </button>
+
+        <a href="{{{lessonurl}}}" class="btn btn-secondary">
+            {{#str}} cancel {{/str}}
+        </a>
     </div>
 
     <div class="hidden">

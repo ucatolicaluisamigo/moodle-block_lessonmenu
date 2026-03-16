@@ -22,6 +22,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use block_lessonmenu\local\controller;
+
 /**
  * Form for editing block instances.
  *
@@ -59,11 +61,16 @@ class block_lessonmenu_edit_form extends block_edit_form {
             0
         );
 
+        $options = [
+            controller::DISPLAYQUESTIONS_NO => get_string('no'),
+            controller::DISPLAYQUESTIONS_YES => get_string('yes'),
+            controller::DISPLAYQUESTIONS_RESUME => get_string('resumequestionsmode', 'block_lessonmenu'),
+        ];
         $mform->addElement(
             'select',
             'config_displayquestions',
             get_string('configdisplayquestions', 'block_lessonmenu'),
-            $notyes,
+            $options,
             0
         );
         $mform->addHelpButton('config_displayquestions', 'configdisplayquestions', 'block_lessonmenu');

@@ -43,7 +43,6 @@ var s = [];
  * @return {Promise} Promise that is resolved when the strings are loaded.
  */
 function loadStrings() {
-
     strings.forEach(one => {
         s[one.key] = one.key;
     });
@@ -127,9 +126,36 @@ export const init = async() => {
         $newitem.find('input[type="text"]')[0].focus();
     });
 
-    $('#lessonmenu-edit-structure-actions [data-action="deletesection"]').on('click', event => {
+    $('#lessonmenu-edit-structure-container [data-action="deletesection"]').on('click', event => {
         event.preventDefault();
         deletesection(event);
+    });
+
+    $('#lessonmenu-edit-structure-container [data-action="autoorder"]').on('click', event => {
+        event.preventDefault();
+
+        let $current = $editorContainer.find('[data-type="page"]').first();
+        while ($current.length) {
+            const currentIndex = $current.data('index') || 0;
+            const expectedNext = currentIndex + 1;
+            const $next = $current.nextAll('[data-type="page"]').first();
+
+            if (!$next.length) {
+                break;
+            }
+
+            if (($next.data('index') || 0) !== expectedNext) {
+                const $expected = $editorContainer.find('[data-type="page"][data-index="' + expectedNext + '"]');
+                if ($expected.length) {
+                    $current.after($expected);
+                    $current = $expected;
+                } else {
+                    $current = $next;
+                }
+            } else {
+                $current = $next;
+            }
+        }
     });
 
     // Change the content type.
@@ -272,7 +298,7 @@ export const init = async() => {
     });
 
     // Apply the initial indentation.
-    $editorContainer.find('[data-type="page"]').each((index, element) => {
+    $editorContainer.find('[data-type="page"]').each((unused, element) => {
         const $element = $(element);
         const indentation = $element.data('indentation') || 0;
         setIdentation($element, indentation);

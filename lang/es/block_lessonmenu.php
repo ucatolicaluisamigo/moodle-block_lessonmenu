@@ -39,8 +39,8 @@ $string['configstartcollapsed'] = 'Iniciar contraído';
 $string['configtitle'] = 'Título del bloque';
 $string['contenttypes'] = 'Tipos de contenido';
 $string['contenttypes_help'] = 'Especifique qué tipos de contenido se deben mostrar en el bloque del menú de la lección. Introduzca un tipo de contenido por línea con el formato "tipo|icono|etiqueta", donde "tipo" es el nombre del tipo de contenido, "icono" es el nombre del icono correspondiente de la <a href="https://componentlibrary.moodle.com/admin/tool/componentlibrary/docspage.php/moodle/components/moodle-icons/" target="_blank">biblioteca de imágenes de Moodle</a> y "etiqueta" es la etiqueta que se mostrará para el tipo de contenido (opcional). Por ejemplo:<br>
-video|core:e/insert_edit_video|Contenido de vídeo<br>
-audio|core:i/messagecontentaudio|Contenido de audio';
+video|e/insert_edit_video|Contenido de vídeo<br>
+audio|i/messagecontentaudio|Contenido de audio';
 $string['defaultsections'] = 'Secciones predeterminadas';
 $string['defaultsections_help'] = 'Defina las secciones predeterminadas que se incluirán en el bloque del menú de la lección. Introduzca una sección por línea con el formato:<br>
 Nombre del grupo de secciones|Una sección;Otra sección;Última sección';
