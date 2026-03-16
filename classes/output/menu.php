@@ -292,7 +292,14 @@ class menu implements renderable, templatable {
         $resumeitem->visited = $allvisited;
         $resumeitem->iscurrent = $anycurrent;
         $resumeitem->isresume = true;
-        $resumeitem->duration = array_sum(array_map(function($i) { return (int)$i->duration; }, $buffer));
+        $resumeitem->duration = array_sum(
+            array_map(
+                function($i) {
+                    return (int)$i->duration;
+                },
+                $buffer
+            )
+        );
 
         $resumeitem->blocked = !(
             $freenavigation ||

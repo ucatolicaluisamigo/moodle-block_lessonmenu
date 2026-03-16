@@ -26,6 +26,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['addsections'] = 'Añadir secciones';
+$string['autoorder'] = 'Orden automático';
 $string['blocked'] = 'Bloqueada';
 $string['changecontenttype'] = 'Cambiar tipo';
 $string['configcss'] = 'CSS personalizado';
@@ -52,15 +53,14 @@ $string['invalidstructure'] = 'La estructura proporcionada no es válida.';
 $string['lessonmenu:addinstance'] = 'Añadir un nuevo bloque de menú de lección';
 $string['lessonmenu:myaddinstance'] = 'Añadir un nuevo bloque de menú de Lecciones al Panel de control';
 $string['newsection'] = 'Nueva sección';
+$string['orphanpages'] = 'Páginas huérfanas';
+$string['pagesdisorderedwarning'] = 'El orden de las páginas en la lección ha cambiado desde la última vez que se editó la estructura del menú. Puede aplicar un orden sugerido automáticamente.';
 $string['pluginname'] = 'Menú de la lección';
 $string['points'] = 'Puntuación';
 $string['privacy:metadata'] = 'El plugin del menú de Lecciones no almacena ningún dato personal.';
+$string['questionsresume'] = 'Cuestionario ({$a} preguntas)';
+$string['resetstructure'] = 'Restablecer estructura';
+$string['resumequestionsmode'] = 'Resumen';
 $string['sectioncompleted'] = 'Completada';
 $string['timespent'] = 'Dedicación';
 $string['visited'] = 'Visitada';
-$string['resumequestionsmode'] = 'Resumen';
-$string['questionsresume'] = 'Cuestionario ({$a} preguntas)';
-$string['autoorder'] = 'Orden automático';
-$string['orphanpages'] = 'Páginas huérfanas';
-$string['pagesdisorderedwarning'] = 'El orden de las páginas en la lección ha cambiado desde la última vez que se editó la estructura del menú. Puede aplicar un orden sugerido automáticamente.';
-$string['resetstructure'] = 'Restablecer estructura';

@@ -49,6 +49,7 @@ class editstructure implements renderable, templatable {
      *
      * @param int $instanceid The block instance id.
      * @param object $lesson The lesson object.
+     * @param object $cm The course module object.
      */
     public function __construct(int $instanceid, object $lesson, object $cm) {
         $this->instanceid = $instanceid;

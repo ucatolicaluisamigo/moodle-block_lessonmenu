@@ -217,7 +217,7 @@
     font-size: 20px;
 }
 
-.block_lessonmenu .list-group-item.current .lessonmenu-structure-moreinfo{
+.block_lessonmenu .list-group-item.current .lessonmenu-structure-moreinfo {
     background-color: var(--lminfo, #fdf5d2);
 }
 
