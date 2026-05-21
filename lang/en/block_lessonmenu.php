@@ -46,6 +46,7 @@ $string['defaultsections'] = 'Default sections';
 $string['defaultsections_help'] = 'Define default sections to be included in the lesson menu block. Enter one section per line using the format:<br>
 Section group name|One section;Other section;Last section';
 $string['durationshort'] = 'min';
+$string['editornotfullprogress'] = 'As an editor user, the progress shown may not reflect the actual progress if question pages are set up.';
 $string['editstructure'] = 'Edit structure';
 $string['invalidindentation'] = 'Need to adjust the tree. The first element of a section can never be indented.';
 $string['invalidindentationtitle'] = 'Invalid indentation';

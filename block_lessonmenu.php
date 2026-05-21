@@ -50,7 +50,12 @@ class block_lessonmenu extends block_base {
      * @return array page-type prefix => true/false.
      */
     public function applicable_formats() {
-        return ['mod-lesson-view' => true];
+        return [
+            'mod-lesson-view' => true,
+            'mod-lesson-edit' => true,
+            'mod-lesson-editpage' => true,
+            'mod-lesson-mod' => true,
+        ];
     }
 
     /**
@@ -60,7 +65,7 @@ class block_lessonmenu extends block_base {
      */
     public function specialization() {
         if (isset($this->config->title)) {
-            $this->title = $this->title = format_string($this->config->title, true, ['context' => $this->context]);
+            $this->title = format_string($this->config->title, true, ['context' => $this->context]);
         }
     }
 
@@ -79,7 +84,7 @@ class block_lessonmenu extends block_base {
      * @return stdClass
      */
     public function get_content() {
-        global $lesson, $pageid;
+        global $lesson, $pageid, $course, $DB;
 
         if ($this->content !== null) {
             return $this->content;
@@ -90,19 +95,21 @@ class block_lessonmenu extends block_base {
             'text' => '',
         ];
 
-        if (empty($lesson)) {
+        $cm = $this->page->cm ?? null;
+
+        if (empty($lesson) && empty($cm)) {
             return $this->content;
+        }
+
+        if (empty($lesson)) {
+            $lesson = new lesson($DB->get_record('lesson', ['id' => $cm->instance], '*', MUST_EXIST), $cm, $course);
         }
 
         $currentpageid = optional_param('pageid', $pageid ?? 0, PARAM_INT);
 
-        if (empty($currentpageid)) {
+        if (empty($currentpageid) && empty($cm)) {
             return $this->content;
         }
-
-        $filteropt = new \stdClass();
-        $filteropt->overflowdiv = true;
-        $filteropt->noclean = true;
 
         $this->content->text = \block_lessonmenu\local\controller::get_block_contents($this->instance->id, $lesson);
 
@@ -127,11 +134,16 @@ class block_lessonmenu extends block_base {
                 $htmlfooter = $htmlfooter['text'];
             }
 
+            $filteropt = new \stdClass();
+            $filteropt->overflowdiv = true;
+            $filteropt->noclean = true;
+
             $this->content->footer .= format_text($htmlfooter, $htmlfooterformat, $filteropt);
         }
 
         if (!empty($this->config->css)) {
             $css = is_array($this->config->css) ? $this->config->css['text'] : $this->config->css;
+            $css = clean_param($css, PARAM_CLEANHTML);
             $this->content->footer .= \html_writer::tag('style', $css, ['type' => 'text/css']);
         }
 
@@ -215,5 +227,21 @@ class block_lessonmenu extends block_base {
         }
 
         parent::instance_config_save($config, $nolongerused);
+    }
+
+    /**
+     * Do any additional initialization you may need at the time a new block instance is created
+     * @return boolean
+     */
+    public function instance_create() {
+        global $lesson, $DB;
+        if (!empty($lesson) && $lesson->displayleft == 1) {
+            $data = new \stdClass();
+            $data->id = $lesson->id;
+            $data->displayleft = 0;
+            $DB->update_record('lesson', $data);
+        }
+
+        return true;
     }
 }

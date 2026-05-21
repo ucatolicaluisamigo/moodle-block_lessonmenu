@@ -334,3 +334,7 @@
     margin-bottom: 0;
     border-top: 1px solid #dedede;
 }
+
+body.editing .block_lessonmenu .card-body {
+    padding-top: 30px !important;
+}

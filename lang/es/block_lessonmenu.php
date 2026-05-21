@@ -46,6 +46,7 @@ $string['defaultsections'] = 'Secciones predeterminadas';
 $string['defaultsections_help'] = 'Defina las secciones predeterminadas que se incluirán en el bloque del menú de la lección. Introduzca una sección por línea con el formato:<br>
 Nombre del grupo de secciones|Una sección;Otra sección;Última sección';
 $string['durationshort'] = 'min';
+$string['editornotfullprogress'] = 'Como usuario editor, el progreso mostrado puede no reflejar el progreso real si hay páginas de preguntas configuradas.';
 $string['editstructure'] = 'Editar estructura';
 $string['invalidindentation'] = 'Es necesario ajustar la estructura. El primer elemento de una sección no puede tener sangría.';
 $string['invalidindentationtitle'] = 'Sangría no válida';

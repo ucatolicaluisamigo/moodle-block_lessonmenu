@@ -60,6 +60,11 @@
     }
 }}
 <div class="lessonmenu-structure-container">
+    {{#messages}}
+        <div class="alert alert-warning" role="alert">
+            {{{.}}}
+        </div>
+    {{/messages}}
     <div class="lessonmenu-structure-progress" role="progressbar" aria-valuenow="{{progress}}" aria-valuemin="0" aria-valuemax="100">
         <div class="lessonmenu-structure-progress-bar" style="width: {{progress}}%;"></div>
         <span class="lessonmenu-structure-progress-label" style="width: {{progress}}%;">{{progress}}%</span>

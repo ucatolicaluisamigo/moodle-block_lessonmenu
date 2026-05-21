@@ -128,7 +128,10 @@ class menu implements renderable, templatable {
             }
 
             $completed = 0;
-            $isresume = ((int)$configdata->displayquestions === controller::DISPLAYQUESTIONS_RESUME);
+            $isresume = false;
+            if (property_exists($configdata, 'displayquestions')) {
+                $isresume = ((int)$configdata->displayquestions === controller::DISPLAYQUESTIONS_RESUME);
+            }
             $questionbuffer = [];
             $newitems = [];
 
@@ -143,7 +146,7 @@ class menu implements renderable, templatable {
                 $isquestion = ($item->page->qtype != 20);
 
                 // Mode NO: remove question pages.
-                if (!$configdata->displayquestions && $isquestion) {
+                if ((!property_exists($configdata, 'displayquestions') || !$configdata->displayquestions) && $isquestion) {
                     continue;
                 }
 
@@ -182,7 +185,8 @@ class menu implements renderable, templatable {
                 $item->blocked = !(
                     $freenavigation ||
                     $item->visited ||
-                    ($previousitem && ($previousitem->visited || ($previousitem->page->qtype == 20 && $previousitem->iscurrent)))
+                    ($previousitem && ($previousitem->visited || ($previousitem->page->qtype == 20 && $previousitem->iscurrent))) ||
+                    $item->iscurrent
                 );
 
                 if ($canedit || (!$item->iscurrent && !$item->blocked)) {
@@ -243,6 +247,11 @@ class menu implements renderable, templatable {
             $stats->totaltime = round($totaltime); // In minutes.
         }
 
+        $messages = [];
+        if ($canedit) {
+            $messages[] = get_string('editornotfullprogress', 'block_lessonmenu');
+        }
+
         return [
             'sesskey' => sesskey(),
             'menuitems' => $menuitems,
@@ -250,6 +259,7 @@ class menu implements renderable, templatable {
             'displaytime' => $displaytime,
             'progress' => $this->lesson->calculate_progress(),
             'stats' => $stats,
+            'messages' => $messages,
         ];
     }
 
@@ -294,7 +304,7 @@ class menu implements renderable, templatable {
         $resumeitem->isresume = true;
         $resumeitem->duration = array_sum(
             array_map(
-                function($i) {
+                function ($i) {
                     return (int)$i->duration;
                 },
                 $buffer

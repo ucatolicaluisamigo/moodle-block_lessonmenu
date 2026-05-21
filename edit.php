@@ -56,6 +56,7 @@ $course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
 $lesson = new lesson($DB->get_record('lesson', ['id' => $cm->instance], '*', MUST_EXIST), $cm, $course);
 
 if (!empty($structure)) {
+    require_sesskey();
     $isvalid = \block_lessonmenu\local\controller::validate_menu_structure($structure);
     if (!$isvalid) {
         throw new moodle_exception('invalidstructure', 'block_lessonmenu');
