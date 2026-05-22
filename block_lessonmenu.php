@@ -17,6 +17,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/mod/lesson/lib.php');
+require_once($CFG->dirroot . '/mod/lesson/locallib.php');
 
 /**
  * Block Lesson menu
@@ -84,7 +85,7 @@ class block_lessonmenu extends block_base {
      * @return stdClass
      */
     public function get_content() {
-        global $lesson, $pageid, $course, $DB;
+        global $lesson, $pageid, $DB;
 
         if ($this->content !== null) {
             return $this->content;
@@ -102,7 +103,9 @@ class block_lessonmenu extends block_base {
         }
 
         if (empty($lesson)) {
-            $lesson = new lesson($DB->get_record('lesson', ['id' => $cm->instance], '*', MUST_EXIST), $cm, $course);
+            $course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
+            $lessonrecord = $DB->get_record('lesson', ['id' => $cm->instance], '*', MUST_EXIST);
+            $lesson = new lesson($lessonrecord, $cm, $course);
         }
 
         $currentpageid = optional_param('pageid', $pageid ?? 0, PARAM_INT);
