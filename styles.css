@@ -177,6 +177,10 @@
     font-size: 14px;
     line-height: 17px;
     padding: 8px 5px;
+
+    &.hidden {
+        display: none;
+    }
 }
 
 .list-group-item.item-disordered {

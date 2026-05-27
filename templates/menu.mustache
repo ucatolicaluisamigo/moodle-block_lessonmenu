@@ -97,7 +97,7 @@
                 <div id="collapse_{{index}}" class="accordion-collapse {{^collapsed}}show{{/collapsed}} collapse" aria-labelledby="heading_{{index}}">
                     <ul class="accordion-body list-group">
                     {{#items}}
-                        <li class="list-group-item {{#iscurrent}}current{{/iscurrent}} {{#visited}}visited{{/visited}} {{#blocked}}blocked{{/blocked}} {{#displaytime}}displaytime{{/displaytime}}" data-pageid="{{pageid}}" data-type="page" data-contenttype="{{contenttype}}" data-indentation="{{indentation}}" data-index="{{index}}" style="padding-left: calc(0.5rem + ({{indentation}} * 1.5rem));">
+                        <li class="list-group-item {{#iscurrent}}current{{/iscurrent}} {{#visited}}visited{{/visited}} {{#blocked}}blocked{{/blocked}} {{#displaytime}}displaytime{{/displaytime}} {{^display}}hidden{{/display}}" data-pageid="{{pageid}}" data-type="page" data-contenttype="{{contenttype}}" data-indentation="{{indentation}}" data-index="{{index}}" style="padding-left: calc(0.5rem + ({{indentation}} * 1.5rem));">
                             {{#visited}}
                                 <span class="item-icon" title="{{#str}}visited, block_lessonmenu{{/str}}">{{#pix}} i/checkedcircle {{/pix}}</span>
                             {{/visited}}

@@ -145,6 +145,7 @@ class controller {
                     'indentation' => 0,
                     'completed' => false,
                     'contenttypeinfo' => null,
+                    'display' => $page->qtype != 20 || $page->display,
                 ];
                 $index++;
             }
@@ -182,6 +183,7 @@ class controller {
                         $currentpage++;
                         $item->page = $pages[$item->pageid];
                         $item->index = $pageorder[$item->pageid] ?? PHP_INT_MAX;
+                        $item->display = $pages[$item->pageid]->qtype != 20 || $pages[$item->pageid]->display;
 
                         if (($item->indentation - $indentation) > 1) {
                             $item->indentation = $indentation + 1;
@@ -259,6 +261,7 @@ class controller {
                         'indentation' => 0,
                         'completed' => false,
                         'contenttypeinfo' => null,
+                        'display' => $page->qtype != 20 || $page->display,
                     ];
 
                     $orphanssection->items[] = $orphansitem;
