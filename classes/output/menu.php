@@ -252,12 +252,18 @@ class menu implements renderable, templatable {
             $messages[] = get_string('editornotfullprogress', 'block_lessonmenu');
         }
 
+        $progress = $this->lesson->calculate_progress();
+        if ($progress == 0 && $currentpageid == LESSON_EOL) {
+            // If the user has reached the end of the lesson but has no progress, show 100% to indicate completion.
+            $progress = 100;
+        }
+
         return [
             'sesskey' => sesskey(),
             'menuitems' => $menuitems,
             'startcollapsed' => $startcollapsed,
             'displaytime' => $displaytime,
-            'progress' => $this->lesson->calculate_progress(),
+            'progress' => $progress,
             'stats' => $stats,
             'messages' => $messages,
         ];
